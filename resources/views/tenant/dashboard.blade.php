@@ -91,17 +91,31 @@
             <div class="space-y-4">
                 <h3 class="font-extrabold text-lg text-gray-900"><i class="fas fa-star text-yellow-400 mr-2"></i>Info Penting</h3>
 
-                <div class="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm hover:-translate-y-1 transition-transform cursor-default">
-                    <div class="flex items-center gap-3 mb-3">
-                        <div class="w-9 h-9 bg-purple-50 rounded-lg flex items-center justify-center text-purple-500"><i class="fas fa-wifi"></i></div>
-                        <p class="font-bold text-gray-900 text-sm">WiFi Kost</p>
+                @foreach($wifiNetworks as $wifi)
+                <div class="relative bg-white/30 backdrop-blur-md rounded-2xl border border-white/40 p-5 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:-translate-y-1 transition-transform cursor-default overflow-hidden">
+                    <!-- decorative blob -->
+                    <div class="absolute -top-6 -right-6 w-20 h-20 bg-purple-200/50 rounded-full blur-xl"></div>
+                    <div class="absolute -bottom-6 -left-6 w-20 h-20 bg-blue-200/50 rounded-full blur-xl"></div>
+
+                    <div class="relative z-10 flex items-center gap-3 mb-3">
+                        <div class="w-9 h-9 bg-white/50 backdrop-blur-sm rounded-lg flex items-center justify-center text-purple-600 shadow-sm border border-white/50"><i class="fas fa-wifi"></i></div>
+                        <p class="font-bold text-gray-900 text-sm">{{ $wifi->name }}</p>
                     </div>
-                    <div class="bg-gray-50 rounded-xl p-3">
-                        <p class="text-xs text-gray-400 font-bold uppercase tracking-wider mb-0.5">SSID & Password</p>
-                        <p class="text-jessa-maroon font-extrabold">JessaKost_5G</p>
-                        <p class="text-gray-600 font-mono text-sm">jessa2024</p>
+                    <div class="relative z-10 bg-white/40 backdrop-blur-sm rounded-xl p-3 border border-white/50 shadow-inner">
+                        <p class="text-[10px] text-gray-500 font-bold uppercase tracking-wider mb-0.5">SSID & Password</p>
+                        <div class="flex flex-col gap-1">
+                            <div class="flex items-center gap-2">
+                                <i class="fas fa-network-wired text-gray-400 text-xs w-4"></i>
+                                <p class="text-jessa-maroon font-extrabold text-sm">{{ $wifi->ssid }}</p>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <i class="fas fa-key text-gray-400 text-xs w-4"></i>
+                                <p class="text-gray-700 font-mono text-sm">{{ $wifi->password }}</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
+                @endforeach
 
                 <div class="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm hover:-translate-y-1 transition-transform cursor-default">
                     <div class="flex items-center gap-3 mb-3">

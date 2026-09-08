@@ -42,9 +42,10 @@
     <div class="w-full max-w-md relative z-10 flex flex-col items-center">
 
         <!-- Center Logo Box with Thin Maroon Roof -->
-        <div class="w-20 h-20 bg-white rounded-2xl flex items-center justify-center text-jessa-maroon text-4xl mb-8 shadow-xl border-t-[5px] border-jessa-maroon relative transform hover:scale-105 transition-transform duration-300 z-20">
-            <!-- Tempat logo asli nanti bisa dimasukkan tag <img> di sini, menggantikan tag <i> -->
-            <i class="fas fa-leaf"></i>
+        <div class="w-24 h-24 bg-white rounded-2xl flex items-center justify-center text-jessa-maroon text-4xl mb-8 shadow-xl border-t-[5px] border-jessa-maroon relative transform hover:scale-105 transition-transform duration-300 z-20 p-2">
+            <!-- Menampilkan Logo Baru Anda -->
+            <img src="{{ asset('images/logo.png') }}" alt="Logo" class="w-full h-full object-contain" onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');">
+            <i class="fas fa-leaf hidden"></i>
             <!-- Glow effect under logo -->
             <div class="absolute inset-0 bg-jessa-maroon/20 filter blur-xl rounded-full -z-10 translate-y-2"></div>
         </div>

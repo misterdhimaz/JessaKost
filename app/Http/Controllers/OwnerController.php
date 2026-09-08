@@ -134,4 +134,16 @@ class OwnerController extends Controller
         $user->delete();
         return redirect()->route('owner.users.index')->with('success', 'Pengguna berhasil dihapus.');
     }
+
+    public function expenses()
+    {
+        $expenses = \App\Models\Expense::with('user')->latest('expense_date')->get();
+        return view('owner.expenses.index', compact('expenses'));
+    }
+
+    public function payments()
+    {
+        $leases = \App\Models\Lease::with('user', 'room', 'bills')->get();
+        return view('owner.payments.index', compact('leases'));
+    }
 }

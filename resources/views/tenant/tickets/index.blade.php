@@ -48,7 +48,7 @@
                                 <i class="fas {{ $ticket->status == 'resolved' ? 'fa-check-circle' : ($ticket->status == 'in_progress' ? 'fa-spinner' : 'fa-exclamation-circle') }}"></i>
                             </div>
                             <div>
-                                <p class="font-bold text-gray-900">{{ $ticket->subject }}</p>
+                                <p class="font-bold text-gray-900">{{ $ticket->title }}</p>
                                 <p class="text-sm text-gray-500 font-medium mt-1 leading-relaxed max-w-xl">{{ $ticket->description }}</p>
                                 <p class="text-xs text-gray-400 font-medium mt-2">
                                     <i class="fas fa-calendar mr-1"></i> Dilaporkan: {{ $ticket->created_at->format('d M Y') }}
@@ -56,7 +56,7 @@
                             </div>
                         </div>
                         <div class="sm:flex-shrink-0">
-                            @if($ticket->status == 'open')
+                            @if($ticket->status == 'pending')
                                 <span class="inline-flex items-center gap-1.5 bg-red-50 text-red-600 border border-red-100 px-3 py-1.5 rounded-full text-xs font-bold">
                                     <span class="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse"></span> Menunggu Tindakan
                                 </span>

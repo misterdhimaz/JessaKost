@@ -19,12 +19,9 @@ class TenantController extends Controller
             $bills = Bill::where('lease_id', $lease->id)->where('status', 'unpaid')->get();
         }
 
-        return view('tenant.dashboard', compact('user', 'lease', 'bills'));
-    }
+        $wifiNetworks = \App\Models\WifiNetwork::all();
 
-    public function createTicket()
-    {
-        return view('tenant.tickets.create');
+        return view('tenant.dashboard', compact('user', 'lease', 'bills', 'wifiNetworks'));
     }
 
     public function tickets(Request $request)
@@ -32,6 +29,35 @@ class TenantController extends Controller
         $tickets = Ticket::where('user_id', $request->user()->id)->latest()->get();
 
         return view('tenant.tickets.index', compact('tickets'));
+    }
+
+    public function createTicket()
+    {
+        return view('tenant.tickets.create');
+    }
+
+    public function storeTicket(Request $request)
+    {
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'required|string',
+            'image' => 'nullable|image|max:2048',
+        ]);
+
+        $lease = \App\Models\Lease::where('user_id', $request->user()->id)
+            ->where('is_active', true)->first();
+
+        if ($request->hasFile('image')) {
+            $validated['image_path'] = $request->file('image')->store('tickets', 'public');
+        }
+
+        $validated['user_id'] = $request->user()->id;
+        $validated['room_id'] = $lease ? $lease->room_id : null;
+        $validated['status'] = 'pending';
+
+        \App\Models\Ticket::create(\Illuminate\Support\Arr::except($validated, ['image']));
+
+        return redirect()->route('tenant.tickets.index')->with('success', 'Keluhan berhasil dikirim.');
     }
 
     public function bills(Request $request)

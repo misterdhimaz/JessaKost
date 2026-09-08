@@ -23,7 +23,7 @@
                                 </div>
                                 <div>
                                     <p class="text-sm text-gray-400">WhatsApp Admin</p>
-                                    <p class="text-lg font-semibold text-white">+62 812-3456-7890</p>
+                                    <p class="text-lg font-semibold text-white">+62 858-3284-1485</p>
                                 </div>
                             </div>
                             <div class="flex items-center">
@@ -37,7 +37,7 @@
                             </div>
                         </div>
 
-                        <a href="https://wa.me/6281234567890" target="_blank" class="inline-block bg-green-500 hover:bg-green-600 text-white font-bold py-4 px-8 rounded-full transition-colors text-center shadow-lg">
+                        <a href="https://wa.me/6285832841485" target="_blank" class="inline-block bg-green-500 hover:bg-green-600 text-white font-bold py-4 px-8 rounded-full transition-colors text-center shadow-lg">
                             <i class="fab fa-whatsapp mr-2"></i> Chat WhatsApp Sekarang
                         </a>
                     </div>

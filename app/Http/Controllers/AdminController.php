@@ -322,4 +322,88 @@ class AdminController extends Controller
 
         return redirect()->route('admin.announcements.index')->with('success', 'Pengumuman berhasil dihapus.');
     }
+
+    public function updateTicket(\Illuminate\Http\Request $request, \App\Models\Ticket $ticket)
+    {
+        $validated = $request->validate([
+            'status' => 'required|in:pending,in_progress,resolved',
+            'cost' => 'nullable|numeric|min:0',
+        ]);
+
+        $ticket->update($validated);
+
+        return redirect()->route('admin.tickets.index')->with('success', 'Status tiket berhasil diperbarui.');
+    }
+
+    public function wifiIndex()
+    {
+        $wifiNetworks = \App\Models\WifiNetwork::latest()->get();
+        return view('admin.wifi.index', compact('wifiNetworks'));
+    }
+
+    public function wifiStore(\Illuminate\Http\Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'ssid' => 'required|string|max:255',
+            'password' => 'required|string|max:255',
+        ]);
+
+        \App\Models\WifiNetwork::create($validated);
+
+        return redirect()->route('admin.wifi.index')->with('success', 'WiFi network created successfully.');
+    }
+
+    public function wifiUpdate(\Illuminate\Http\Request $request, \App\Models\WifiNetwork $wifi)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'ssid' => 'required|string|max:255',
+            'password' => 'required|string|max:255',
+        ]);
+
+        $wifi->update($validated);
+
+        return redirect()->route('admin.wifi.index')->with('success', 'WiFi network updated successfully.');
+    }
+
+    public function wifiDestroy(\App\Models\WifiNetwork $wifi)
+    {
+        $wifi->delete();
+        return redirect()->route('admin.wifi.index')->with('success', 'WiFi network deleted successfully.');
+    }
+
+    public function expenses()
+    {
+        $expenses = \App\Models\Expense::with('user')->latest('expense_date')->get();
+        return view('admin.expenses.index', compact('expenses'));
+    }
+
+    public function storeExpense(\Illuminate\Http\Request $request)
+    {
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'amount' => 'required|numeric|min:0',
+            'expense_date' => 'required|date',
+            'category' => 'required|string|max:255',
+            'proof_image' => 'nullable|image|max:5120',
+            'notes' => 'nullable|string',
+        ]);
+
+        $expense = new \App\Models\Expense();
+        $expense->user_id = auth()->id();
+        $expense->title = $validated['title'];
+        $expense->amount = $validated['amount'];
+        $expense->expense_date = $validated['expense_date'];
+        $expense->category = $validated['category'];
+        $expense->notes = $validated['notes'];
+
+        if ($request->hasFile('proof_image')) {
+            $expense->proof_image_path = $request->file('proof_image')->store('expenses', 'public');
+        }
+
+        $expense->save();
+
+        return redirect()->route('admin.expenses.index')->with('success', 'Pengeluaran berhasil dicatat.');
+    }
 }

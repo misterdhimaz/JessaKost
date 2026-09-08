@@ -5,8 +5,11 @@
             <div class="flex">
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
-                    <a href="{{ route('dashboard') }}" class="flex items-center gap-2">
-                        <div class="w-8 h-8 bg-jessa-cream rounded-lg flex items-center justify-center text-jessa-maroon text-xl">
+                    <a href="{{ route('dashboard') }}" class="flex items-center gap-2 group">
+                        <!-- Menampilkan Logo Baru Anda -->
+                        <img src="{{ asset('images/logo.png') }}" alt="Logo" class="h-8 md:h-10 w-auto object-contain transition-transform duration-300 group-hover:scale-105" onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden'); this.nextElementSibling.classList.add('flex');">
+
+                        <div class="hidden items-center justify-center w-8 h-8 bg-jessa-cream rounded-lg text-jessa-maroon text-xl">
                             <i class="fas fa-leaf"></i>
                         </div>
                         <span class="text-white font-bold text-lg tracking-tight hidden sm:block">Jessa<span class="font-normal text-jessa-cream">Kost</span></span>

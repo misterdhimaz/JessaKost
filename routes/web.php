@@ -25,6 +25,7 @@ Route::middleware(['auth', 'role:tenant'])->prefix('tenant')->name('tenant.')->g
     Route::get('/bills/{bill}/pay', [\App\Http\Controllers\TenantController::class, 'payBill'])->name('bills.pay');
     Route::get('/tickets', [\App\Http\Controllers\TenantController::class, 'tickets'])->name('tickets.index');
     Route::get('/tickets/create', [\App\Http\Controllers\TenantController::class, 'createTicket'])->name('tickets.create');
+    Route::post('/tickets', [\App\Http\Controllers\TenantController::class, 'storeTicket'])->name('tickets.store');
     Route::get('/announcements', [\App\Http\Controllers\TenantController::class, 'announcements'])->name('announcements.index');
     Route::get('/profile', [\App\Http\Controllers\TenantController::class, 'profile'])->name('profile.edit');
     Route::put('/profile', [\App\Http\Controllers\TenantController::class, 'updateProfile'])->name('profile.update');
@@ -50,6 +51,7 @@ Route::middleware(['auth', 'role:admin,owner'])->prefix('admin')->name('admin.')
     Route::post('/electricity/{bill}/token', [\App\Http\Controllers\AdminController::class, 'uploadTokenProof'])->name('electricity.upload_token');
 
     Route::get('/tickets', [\App\Http\Controllers\AdminController::class, 'tickets'])->name('tickets.index');
+    Route::put('/tickets/{ticket}', [\App\Http\Controllers\AdminController::class, 'updateTicket'])->name('tickets.update');
 
     Route::get('/announcements', [\App\Http\Controllers\AdminController::class, 'announcements'])->name('announcements.index');
     Route::get('/announcements/create', [\App\Http\Controllers\AdminController::class, 'createAnnouncement'])->name('announcements.create');
@@ -57,6 +59,14 @@ Route::middleware(['auth', 'role:admin,owner'])->prefix('admin')->name('admin.')
     Route::get('/announcements/{announcement}/edit', [\App\Http\Controllers\AdminController::class, 'editAnnouncement'])->name('announcements.edit');
     Route::put('/announcements/{announcement}', [\App\Http\Controllers\AdminController::class, 'updateAnnouncement'])->name('announcements.update');
     Route::delete('/announcements/{announcement}', [\App\Http\Controllers\AdminController::class, 'destroyAnnouncement'])->name('announcements.destroy');
+
+    Route::get('/wifi', [\App\Http\Controllers\AdminController::class, 'wifiIndex'])->name('wifi.index');
+    Route::post('/wifi', [\App\Http\Controllers\AdminController::class, 'wifiStore'])->name('wifi.store');
+    Route::put('/wifi/{wifi}', [\App\Http\Controllers\AdminController::class, 'wifiUpdate'])->name('wifi.update');
+    Route::delete('/wifi/{wifi}', [\App\Http\Controllers\AdminController::class, 'wifiDestroy'])->name('wifi.destroy');
+
+    Route::get('/expenses', [\App\Http\Controllers\AdminController::class, 'expenses'])->name('expenses.index');
+    Route::post('/expenses', [\App\Http\Controllers\AdminController::class, 'storeExpense'])->name('expenses.store');
 });
 
 // Owner Routes
@@ -71,6 +81,9 @@ Route::middleware(['auth', 'role:owner'])->prefix('owner')->name('owner.')->grou
     Route::get('/users/{user}/edit', [\App\Http\Controllers\OwnerController::class, 'editUser'])->name('users.edit');
     Route::put('/users/{user}', [\App\Http\Controllers\OwnerController::class, 'updateUser'])->name('users.update');
     Route::delete('/users/{user}', [\App\Http\Controllers\OwnerController::class, 'destroyUser'])->name('users.destroy');
+
+    Route::get('/expenses', [\App\Http\Controllers\OwnerController::class, 'expenses'])->name('expenses.index');
+    Route::get('/payments', [\App\Http\Controllers\OwnerController::class, 'payments'])->name('payments.index');
 });
 
 Route::middleware('auth')->group(function () {

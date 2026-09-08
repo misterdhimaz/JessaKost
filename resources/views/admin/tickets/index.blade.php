@@ -10,7 +10,7 @@
         </div>
     </x-slot>
 
-    <div class="space-y-0">
+    <div class="space-y-0" x-data="{ showModal: false, ticketId: null, ticketStatus: '', ticketCost: '' }">
         <div class="max-w-full">
             <div class="bg-white rounded-[2rem] shadow-sm border border-gray-100 overflow-hidden">
                 <div class="p-6 border-b border-gray-100 flex flex-col md:flex-row md:items-center justify-between gap-4 bg-gray-50/50">
@@ -27,7 +27,7 @@
                                 <th class="p-4">Tanggal</th>
                                 <th class="p-4">Pelapor (Kamar)</th>
                                 <th class="p-4">Subjek & Deskripsi</th>
-                                <th class="p-4">Status</th>
+                                <th class="p-4">Status & Biaya</th>
                                 <th class="p-4 text-right">Tindakan</th>
                             </tr>
                         </thead>
@@ -39,37 +39,38 @@
                                 </td>
                                 <td class="p-4">
                                     <p class="font-bold text-gray-900">{{ $ticket->user->name }}</p>
-                                    <p class="text-xs text-gray-500 mt-1">Kamar {{ $ticket->user->leases->first()->room->room_number ?? '?' }}</p>
+                                    <p class="text-xs text-gray-500 mt-1">Kamar {{ $ticket->room->room_number ?? '?' }}</p>
                                 </td>
                                 <td class="p-4 max-w-xs">
-                                    <p class="font-bold text-gray-900 truncate">{{ $ticket->subject }}</p>
+                                    <p class="font-bold text-gray-900 truncate">{{ $ticket->title }}</p>
                                     <p class="text-xs text-gray-500 mt-1 truncate">{{ $ticket->description }}</p>
+                                    @if($ticket->image_path)
+                                        <a href="{{ asset('storage/' . $ticket->image_path) }}" target="_blank" class="text-xs text-blue-500 hover:underline mt-1 inline-block"><i class="fas fa-image mr-1"></i>Lihat Foto</a>
+                                    @endif
                                 </td>
                                 <td class="p-4">
-                                    @if($ticket->status == 'open')
-                                        <span class="inline-flex items-center gap-1.5 bg-red-50 text-red-700 px-3 py-1.5 rounded-full text-xs font-bold border border-red-100">
-                                            <span class="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></span> Baru (Open)
+                                    @if($ticket->status == 'pending')
+                                        <span class="inline-flex items-center gap-1.5 bg-red-50 text-red-700 px-3 py-1.5 rounded-full text-xs font-bold border border-red-100 mb-1">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></span> Baru (Pending)
                                         </span>
                                     @elseif($ticket->status == 'in_progress')
-                                        <span class="inline-flex items-center gap-1.5 bg-yellow-50 text-yellow-700 px-3 py-1.5 rounded-full text-xs font-bold border border-yellow-100">
+                                        <span class="inline-flex items-center gap-1.5 bg-yellow-50 text-yellow-700 px-3 py-1.5 rounded-full text-xs font-bold border border-yellow-100 mb-1">
                                             <span class="w-1.5 h-1.5 rounded-full bg-yellow-500"></span> Diproses
                                         </span>
                                     @else
-                                        <span class="inline-flex items-center gap-1.5 bg-green-50 text-green-700 px-3 py-1.5 rounded-full text-xs font-bold border border-green-100">
+                                        <span class="inline-flex items-center gap-1.5 bg-green-50 text-green-700 px-3 py-1.5 rounded-full text-xs font-bold border border-green-100 mb-1">
                                             <span class="w-1.5 h-1.5 rounded-full bg-green-500"></span> Selesai
                                         </span>
                                     @endif
+
+                                    @if($ticket->cost)
+                                        <p class="text-xs text-gray-600 font-bold mt-1">Biaya: Rp{{ number_format($ticket->cost, 0, ',', '.') }}</p>
+                                    @endif
                                 </td>
                                 <td class="p-4 text-right">
-                                    @if($ticket->status != 'resolved')
-                                    <button class="inline-flex items-center gap-2 text-jessa-maroon bg-jessa-maroon/5 hover:bg-jessa-maroon hover:text-white px-3 py-1.5 rounded-lg text-xs font-bold transition-colors border border-jessa-maroon/10">
-                                        Update Status
+                                    <button @click="showModal = true; ticketId = '{{ $ticket->id }}'; ticketStatus = '{{ $ticket->status }}'; ticketCost = '{{ $ticket->cost ?? '' }}';" class="inline-flex items-center gap-2 text-jessa-maroon bg-jessa-maroon/5 hover:bg-jessa-maroon hover:text-white px-3 py-1.5 rounded-lg text-xs font-bold transition-colors border border-jessa-maroon/10">
+                                        Update
                                     </button>
-                                    @else
-                                    <button class="inline-flex items-center gap-2 text-gray-500 bg-gray-50 px-3 py-1.5 rounded-lg text-xs font-bold transition-colors border border-gray-200">
-                                        Lihat Detail
-                                    </button>
-                                    @endif
                                 </td>
                             </tr>
                             @empty
@@ -85,6 +86,47 @@
                             @endforelse
                         </tbody>
                     </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Update Status -->
+        <div x-show="showModal" class="fixed inset-0 z-50 overflow-y-auto" style="display: none;">
+            <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:p-0">
+                <div x-show="showModal" class="fixed inset-0 transition-opacity bg-gray-900/50 backdrop-blur-sm" @click="showModal = false"></div>
+
+                <div x-show="showModal" class="relative inline-block w-full max-w-md p-8 overflow-hidden text-left align-bottom transition-all transform bg-white shadow-xl rounded-[2rem] sm:my-8 sm:align-middle">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-xl font-extrabold text-gray-900">Update Status Laporan</h3>
+                        <button type="button" @click="showModal = false" class="text-gray-400 hover:text-gray-500 transition-colors">
+                            <i class="fas fa-times text-xl"></i>
+                        </button>
+                    </div>
+
+                    <form :action="'/admin/tickets/' + ticketId" method="POST" class="space-y-5">
+                        @csrf
+                        <input type="hidden" name="_method" value="PUT">
+
+                        <div>
+                            <x-input-label for="status" value="Status Pengerjaan" />
+                            <select id="status" name="status" class="mt-1 block w-full border-gray-300 focus:border-jessa-maroon focus:ring-jessa-maroon rounded-xl shadow-sm" x-model="ticketStatus" required>
+                                <option value="pending">Menunggu Tindakan (Pending)</option>
+                                <option value="in_progress">Sedang Diproses (In Progress)</option>
+                                <option value="resolved">Sudah Selesai (Resolved)</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <x-input-label for="cost" value="Biaya Perbaikan (Rp) - Opsional" />
+                            <x-text-input id="cost" name="cost" type="number" class="mt-1 block w-full" x-model="ticketCost" placeholder="Contoh: 150000" />
+                            <p class="text-xs text-gray-400 mt-1">Hanya diisi jika ada biaya perbaikan yang dibebankan/dikeluarkan.</p>
+                        </div>
+
+                        <div class="mt-6 flex justify-end gap-3 pt-4 border-t border-gray-100">
+                            <button type="button" @click="showModal = false" class="px-5 py-2.5 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-xl font-bold transition-colors">Batal</button>
+                            <button type="submit" class="px-5 py-2.5 text-white bg-jessa-maroon hover:bg-jessa-maroonDark rounded-xl font-bold shadow-sm transition-colors">Simpan</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>

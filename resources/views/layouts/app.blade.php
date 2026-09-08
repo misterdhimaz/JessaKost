@@ -145,9 +145,14 @@
             <!-- Logo area -->
             <div class="h-24 flex items-center justify-between px-8 border-b border-gray-100/50 shrink-0">
                 <a href="/" class="flex items-center gap-3 group">
-                    <div class="w-12 h-12 bg-gradient-to-br from-jessa-maroon to-red-900 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-jessa-maroon/30 group-hover:scale-105 group-hover:rotate-3 transition-all duration-300">
+                    <!-- Menampilkan Logo Baru Anda -->
+                    <img src="{{ asset('images/logo.png') }}" alt="Logo" class="h-12 w-auto object-contain transition-transform duration-300 group-hover:scale-105 group-hover:rotate-3" onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden'); this.nextElementSibling.classList.add('flex');">
+
+                    <!-- Fallback -->
+                    <div class="hidden w-12 h-12 bg-gradient-to-br from-jessa-maroon to-red-900 rounded-2xl items-center justify-center text-white shadow-lg shadow-jessa-maroon/30 group-hover:scale-105 group-hover:rotate-3 transition-all duration-300">
                         <i class="fas fa-building text-xl"></i>
                     </div>
+
                     <div>
                         <h1 class="text-xl font-black tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-600">Jessa Kost</h1>
                         <p class="text-[10px] text-jessa-maroon font-bold uppercase tracking-widest">Smart Living</p>
@@ -159,9 +164,9 @@
             </div>
 
             <!-- Navigation Links -->
-            
+
             <nav class="flex-1 overflow-y-auto px-4 py-6 space-y-1 relative custom-scrollbar">
-                
+
                 {{-- Dashboard Link (All Roles) --}}
                 <div class="px-3 mb-3 mt-2 text-[10px] font-black text-gray-400 uppercase tracking-widest flex items-center gap-2">
                     <span class="w-2 h-2 rounded-full bg-jessa-maroon"></span> Menu Utama

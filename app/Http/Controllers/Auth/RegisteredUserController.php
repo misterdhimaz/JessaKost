@@ -40,12 +40,17 @@ class RegisteredUserController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'otp_code' => sprintf("%06d", mt_rand(1, 999999)),
+            'otp_expires_at' => now()->addMinutes(10),
         ]);
 
         event(new Registered($user));
 
-        Auth::login($user);
+        // Note: For production with valid SMTP, send a real Mailable here.
+        // \Illuminate\Support\Facades\Mail::to($user->email)->send(new \App\Mail\OtpMail($user->otp_code));
+        \Illuminate\Support\Facades\Log::info("YOUR REGISTRATION OTP CODE FOR {$user->email} IS: {$user->otp_code}");
 
-        return redirect(route('dashboard', absolute: false));
+        // Redirect to OTP Verification page instead of auto-login
+        return redirect()->route('otp.verify.form')->with('email', $user->email)->with('success', 'Silakan periksa email Anda (atau file laravel.log di lokal) untuk kode OTP.');
     }
 }
