@@ -18,6 +18,8 @@ class Bill extends Model
         'due_date',
         'status',
         'payment_url',
+        'token_code',
+        'token_proof_path',
         'paid_at',
         'billing_period'
     ];

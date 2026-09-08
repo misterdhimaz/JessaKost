@@ -17,4 +17,9 @@ class GuestLog extends Model
         'id_card_photo_path',
         'is_overnight',
     ];
+
+    public function tenant()
+    {
+        return $this->belongsTo(User::class, 'related_tenant_id');
+    }
 }

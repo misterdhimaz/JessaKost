@@ -218,8 +218,18 @@
     </section>
 
     <!-- Kamar Tersedia Section -->
-    <section id="kamar" class="py-24 relative bg-jessa-creamDark">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="kamar" class="py-24 relative bg-jessa-creamDark" x-data="{
+        modalOpen: false,
+        activeImage: '',
+        roomData: {
+            number: '',
+            price: '',
+            desc: '',
+            cover: '',
+            gallery: []
+        }
+    }">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <div class="flex flex-col md:flex-row justify-between items-end mb-12" data-aos="fade-in">
                 <div class="max-w-2xl">
                     <h4 class="text-jessa-bata font-bold tracking-wider uppercase text-sm mb-2">Tipe Kamar</h4>
@@ -228,19 +238,33 @@
                 </div>
             </div>
 
-            @if(isset($rooms) && $rooms->count() > 0)
+            @if(isset($featuredRooms) && $featuredRooms->count() > 0)
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    @foreach($rooms as $index => $room)
-                    <div class="bg-white rounded-3xl overflow-hidden shadow-lg border border-gray-100 transition-all duration-300 hover:shadow-2xl hover:-translate-y-2" data-aos="flip-left" data-aos-delay="{{ $index * 150 }}">
-                        <div class="relative h-64 overflow-hidden group">
-                            <!-- Dummy Image (In real app, fetch from DB) -->
-                            <img src="https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Kamar {{ $room->room_number }}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                    @foreach($featuredRooms as $index => $room)
+                    <div class="bg-white rounded-3xl overflow-hidden shadow-lg border border-gray-100 transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 group cursor-pointer" data-aos="flip-left" data-aos-delay="{{ $index * 150 }}"
+                        @click="modalOpen = true; roomData = {
+                            number: '{{ $room->room_number }}',
+                            price: '{{ number_format($room->price_per_month, 0, ',', '.') }}',
+                            desc: '{{ htmlspecialchars($room->description ?? 'Full Furnished (Kasur, Lemari, Meja), Kamar Mandi Dalam, WiFi.', ENT_QUOTES) }}',
+                            cover: '{{ $room->cover_image_path ? Storage::url($room->cover_image_path) : 'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af' }}',
+                            gallery: {{ json_encode($room->detail_image_paths ? array_map(fn($p) => Storage::url($p), $room->detail_image_paths) : []) }}
+                        }; activeImage = roomData.cover;">
+
+                        <div class="relative h-64 overflow-hidden">
+                            <img src="{{ $room->cover_image_path ? Storage::url($room->cover_image_path) : 'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af' }}" alt="Kamar {{ $room->room_number }}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
 
                             <div class="absolute top-4 right-4 bg-green-500 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-md backdrop-blur-sm bg-opacity-90">
                                 Tersedia
                             </div>
                             <div class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black/70 to-transparent p-6 pt-12">
                                 <h3 class="text-2xl font-bold text-white">Kamar {{ $room->room_number }}</h3>
+                            </div>
+
+                            <!-- Overlay CTA -->
+                            <div class="absolute inset-0 bg-jessa-bata/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center backdrop-blur-sm">
+                                <span class="bg-white text-jessa-bata font-bold px-6 py-2 rounded-full shadow-lg transform translate-y-4 group-hover:translate-y-0 transition-all duration-300">
+                                    <i class="fas fa-search-plus mr-2"></i>Lihat Galeri
+                                </span>
                             </div>
                         </div>
 
@@ -251,22 +275,9 @@
                                     <p class="text-2xl font-bold text-jessa-bata">Rp {{ number_format($room->price_per_month, 0, ',', '.') }}</p>
                                 </div>
                             </div>
-
-                            <ul class="space-y-3 mb-8">
-                                <li class="flex items-center text-sm text-gray-600">
-                                    <i class="fas fa-check-circle text-jessa-bataLight mr-3"></i> Full Furnished (Kasur, Lemari, Meja)
-                                </li>
-                                <li class="flex items-center text-sm text-gray-600">
-                                    <i class="fas fa-check-circle text-jessa-bataLight mr-3"></i> Listrik Token (Terpisah)
-                                </li>
-                                <li class="flex items-center text-sm text-gray-600">
-                                    <i class="fas fa-check-circle text-jessa-bataLight mr-3"></i> Akses Kunci Digital 24 Jam
-                                </li>
-                            </ul>
-
-                            <a href="#kontak" class="block w-full py-3 px-4 bg-jessa-cream text-jessa-bata font-semibold text-center rounded-xl border border-jessa-bata/20 hover:bg-jessa-bata hover:text-white transition-colors">
-                                Booking Sekarang
-                            </a>
+                            <button class="block w-full py-3 px-4 bg-jessa-cream text-jessa-bata font-bold text-center rounded-xl hover:bg-jessa-bata hover:text-white transition-colors">
+                                Lihat Detail Kamar
+                            </button>
                         </div>
                     </div>
                     @endforeach
@@ -281,6 +292,82 @@
                     <a href="#kontak" class="inline-block py-3 px-8 bg-jessa-bata text-white font-semibold rounded-full hover:bg-jessa-bataDark transition-colors shadow-lg">Hubungi Kami</a>
                 </div>
             @endif
+        </div>
+
+        <!-- Room Detail Modal (AlpineJS) -->
+        <div x-show="modalOpen" class="fixed inset-0 z-50 overflow-y-auto" style="display: none;" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+            <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+
+                <div x-show="modalOpen"
+                     x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
+                     x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
+                     class="fixed inset-0 bg-gray-900 bg-opacity-75 backdrop-blur-sm transition-opacity"
+                     @click="modalOpen = false"></div>
+
+                <!-- This element is to trick the browser into centering the modal contents. -->
+                <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+
+                <div x-show="modalOpen"
+                     x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+                     x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                     class="inline-block align-bottom bg-white rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle w-full max-w-4xl border border-gray-100">
+
+                    <button @click="modalOpen = false" class="absolute top-4 right-4 z-10 w-10 h-10 bg-white/80 backdrop-blur-md rounded-full flex items-center justify-center text-gray-800 hover:bg-white hover:text-jessa-bata transition-colors shadow-sm">
+                        <i class="fas fa-times"></i>
+                    </button>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2">
+                        <!-- Left: Gallery -->
+                        <div class="bg-gray-100 p-4 flex flex-col gap-4">
+                            <!-- Main Image -->
+                            <div class="rounded-2xl overflow-hidden aspect-[4/3] bg-gray-200 shadow-inner relative group">
+                                <img :src="activeImage" class="w-full h-full object-cover transition-opacity duration-300">
+                            </div>
+                            <!-- Thumbnails -->
+                            <div class="grid grid-cols-4 gap-2">
+                                <div @click="activeImage = roomData.cover" class="aspect-square rounded-xl overflow-hidden cursor-pointer border-2 transition-colors" :class="activeImage === roomData.cover ? 'border-jessa-bata' : 'border-transparent hover:border-white/50 opacity-70 hover:opacity-100'">
+                                    <img :src="roomData.cover" class="w-full h-full object-cover">
+                                </div>
+                                <template x-for="img in roomData.gallery" :key="img">
+                                    <div @click="activeImage = img" class="aspect-square rounded-xl overflow-hidden cursor-pointer border-2 transition-colors" :class="activeImage === img ? 'border-jessa-bata' : 'border-transparent hover:border-white/50 opacity-70 hover:opacity-100'">
+                                        <img :src="img" class="w-full h-full object-cover">
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+
+                        <!-- Right: Details -->
+                        <div class="p-8 flex flex-col justify-between">
+                            <div>
+                                <div class="inline-flex items-center gap-1.5 px-3 py-1 bg-green-50 text-green-600 rounded-full text-xs font-bold mb-4 border border-green-100">
+                                    <span class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span> Tersedia
+                                </div>
+                                <h3 class="text-3xl font-black text-gray-900 mb-2" x-text="'Kamar ' + roomData.number"></h3>
+                                <p class="text-jessa-bata font-bold text-2xl mb-6" x-text="'Rp ' + roomData.price + ' / bln'"></p>
+
+                                <h4 class="font-bold text-gray-900 mb-2 border-b border-gray-100 pb-2">Deskripsi & Fasilitas</h4>
+                                <p class="text-gray-600 text-sm leading-relaxed mb-6 whitespace-pre-line" x-text="roomData.desc"></p>
+
+                                <ul class="space-y-3 mb-8">
+                                    <li class="flex items-start text-sm text-gray-600">
+                                        <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i> Full Furnished (Kasur, Lemari, Meja)
+                                    </li>
+                                    <li class="flex items-start text-sm text-gray-600">
+                                        <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i> Kamar Mandi Dalam
+                                    </li>
+                                    <li class="flex items-start text-sm text-gray-600">
+                                        <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i> Listrik Token (Meteran Terpisah per Kamar)
+                                    </li>
+                                </ul>
+                            </div>
+
+                            <a href="#kontak" @click="modalOpen = false" class="block w-full py-4 bg-jessa-bata text-white font-bold text-center rounded-xl hover:bg-jessa-bataDark transition-colors shadow-lg shadow-jessa-bata/30 hover:-translate-y-0.5">
+                                <i class="fab fa-whatsapp mr-2"></i> Hubungi Admin (Booking)
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
 

@@ -82,23 +82,27 @@
             </div>
         </div>
 
-        {{-- Image Viewer Modal --}}
-        <div x-show="photoModalOpen" style="display: none;" class="fixed inset-0 z-[100] flex items-center justify-center overflow-y-auto overflow-x-hidden bg-black/70 p-4 sm:p-0" x-transition.opacity>
-            <div class="relative w-full max-w-2xl bg-white rounded-3xl shadow-2xl overflow-hidden" @click.away="photoModalOpen = false" x-transition.scale.origin.bottom>
-                <div class="flex justify-between items-center p-5 border-b border-gray-100 bg-gray-50/50">
-                    <h3 class="font-extrabold text-gray-900 text-lg"><i class="fas fa-id-card text-jessa-maroon mr-2"></i>Foto Kartu Identitas</h3>
-                    <button @click="photoModalOpen = false" class="text-gray-400 hover:text-gray-900 bg-gray-100 hover:bg-gray-200 rounded-xl w-8 h-8 flex items-center justify-center transition-colors">
-                        <i class="fas fa-times"></i>
-                    </button>
+        {{-- Premium Image Viewer Modal --}}
+        <div x-show="photoModalOpen" style="display: none;" class="fixed inset-0 z-[100] flex items-center justify-center bg-gray-900/95 backdrop-blur-md p-4 sm:p-8 transition-all" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
+
+            <!-- Floating Close Button -->
+            <button @click="photoModalOpen = false" class="absolute top-6 right-6 sm:top-10 sm:right-10 text-white/70 hover:text-white bg-white/10 hover:bg-white/20 rounded-full w-12 h-12 flex items-center justify-center transition-all shadow-lg border border-white/10 hover:scale-105 z-50">
+                <i class="fas fa-times text-xl"></i>
+            </button>
+
+            <!-- Image Container -->
+            <div class="relative w-full max-w-5xl flex flex-col items-center justify-center h-full" @click.away="photoModalOpen = false" x-transition:enter="transition ease-out duration-300 delay-100" x-transition:enter-start="opacity-0 scale-95 translate-y-8" x-transition:enter-end="opacity-100 scale-100 translate-y-0">
+
+                <div class="relative group">
+                    <img :src="currentPhoto" alt="ID Card" class="max-h-[75vh] w-auto object-contain rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] border border-white/10 transition-transform duration-300 group-hover:scale-[1.02]">
+
+                    <!-- Gradient Overlay on Hover for premium feel -->
+                    <div class="absolute inset-0 rounded-2xl bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
                 </div>
-                <div class="p-6 flex justify-center bg-gray-100">
-                    <img :src="currentPhoto" alt="ID Card" class="max-h-[60vh] object-contain rounded-xl shadow-sm border border-gray-200">
-                </div>
-                <div class="p-5 border-t border-gray-100 bg-white flex justify-end">
-                    <button @click="photoModalOpen = false" class="px-6 py-2.5 bg-gray-100 text-gray-700 font-bold rounded-xl hover:bg-gray-200 transition-colors">
-                        Tutup
-                    </button>
-                </div>
+
+                <p class="mt-8 text-white/90 font-bold text-sm text-center px-6 py-3 bg-white/10 backdrop-blur-xl rounded-full shadow-lg border border-white/10 tracking-wide">
+                    <i class="fas fa-id-card text-jessa-cream mr-2"></i> KARTU IDENTITAS TAMU
+                </p>
             </div>
         </div>
 

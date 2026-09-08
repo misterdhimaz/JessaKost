@@ -11,7 +11,7 @@
         </div>
     </x-slot>
 
-    <div class="space-y-6">
+    <div class="space-y-6" x-data="{ photoModalOpen: false, currentPhoto: '', currentCode: '' }">
 
             {{-- Summary Cards --}}
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -65,9 +65,16 @@
                         <div class="flex items-center gap-4 sm:flex-shrink-0">
                             <p class="font-extrabold text-lg text-gray-900">Rp {{ number_format($bill->amount, 0, ',', '.') }}</p>
                             @if($bill->status == 'paid')
-                                <span class="inline-flex items-center gap-1.5 bg-green-50 text-green-700 border border-green-100 px-3 py-1.5 rounded-full text-xs font-bold">
-                                    <span class="w-1.5 h-1.5 bg-green-500 rounded-full"></span> Lunas
-                                </span>
+                                <div class="flex flex-col items-end gap-2">
+                                    <span class="inline-flex items-center gap-1.5 bg-green-50 text-green-700 border border-green-100 px-3 py-1.5 rounded-full text-xs font-bold">
+                                        <span class="w-1.5 h-1.5 bg-green-500 rounded-full"></span> Lunas
+                                    </span>
+                                    @if($bill->type == 'electricity' && $bill->token_code)
+                                        <button @click="currentPhoto = '{{ asset('storage/' . $bill->token_proof_path) }}'; currentCode = '{{ $bill->token_code }}'; photoModalOpen = true" class="text-[10px] bg-blue-50 text-blue-600 border border-blue-200 px-2 py-1 rounded-lg font-bold hover:bg-blue-100 transition-colors flex items-center gap-1">
+                                            <i class="fas fa-bolt text-yellow-500"></i> Lihat Token
+                                        </button>
+                                    @endif
+                                </div>
                             @else
                                 <a href="{{ $bill->payment_url ?? '#' }}" class="bg-jessa-maroon text-white font-bold px-5 py-2 rounded-xl hover:bg-jessa-maroonDark transition-colors text-sm shadow-sm whitespace-nowrap">
                                     <i class="fas fa-credit-card mr-2"></i>Bayar
@@ -84,6 +91,22 @@
                         <p class="text-gray-400 font-medium text-sm">Tagihan Anda akan muncul di sini setelah diproses oleh Admin.</p>
                     </div>
                     @endforelse
+                </div>
+            </div>
+
+            {{-- Token Photo Modal --}}
+            <div x-show="photoModalOpen" style="display: none;" class="fixed inset-0 z-[100] flex items-center justify-center bg-gray-900/95 backdrop-blur-md p-4 sm:p-8 transition-all">
+                <button @click="photoModalOpen = false" class="absolute top-6 right-6 sm:top-10 sm:right-10 text-white/70 hover:text-white bg-white/10 hover:bg-white/20 rounded-full w-12 h-12 flex items-center justify-center transition-all shadow-lg border border-white/10 hover:scale-105 z-50">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+                <div class="relative w-full max-w-5xl flex flex-col items-center justify-center h-full" @click.away="photoModalOpen = false">
+                    <div class="bg-white p-6 rounded-3xl mb-6 shadow-2xl flex flex-col items-center max-w-sm w-full border border-gray-100 relative overflow-hidden">
+                        <div class="absolute top-0 inset-x-0 h-2 bg-jessa-maroon"></div>
+                        <p class="text-gray-400 font-bold text-[10px] uppercase tracking-widest mb-1 mt-2">Kode Token Listrik Anda</p>
+                        <p class="text-2xl font-black text-gray-900 tracking-[0.2em]" x-text="currentCode"></p>
+                    </div>
+                    <img :src="currentPhoto" class="max-h-[60vh] w-auto object-contain rounded-2xl shadow-2xl border border-white/10">
+                    <p class="mt-6 text-white/90 font-bold text-sm text-center px-6 py-3 bg-white/10 backdrop-blur-xl rounded-full shadow-lg border border-white/10">BUKTI STRUK PENGISIAN TOKEN</p>
                 </div>
             </div>
 

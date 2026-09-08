@@ -47,7 +47,19 @@
                             @endif
                         </div>
                     </div>
-                    <p class="text-gray-600 text-sm leading-relaxed">{{ Str::limit($announcement->body, 150) }}</p>
+                    <p class="text-gray-600 text-sm leading-relaxed mb-4">{{ Str::limit($announcement->body, 150) }}</p>
+                    <div class="pt-4 border-t border-gray-50 flex items-center justify-end gap-2">
+                        <a href="{{ route('admin.announcements.edit', $announcement) }}" class="p-2 text-blue-600 hover:bg-blue-50 rounded-xl transition-colors" title="Edit">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        <form action="{{ route('admin.announcements.destroy', $announcement) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus pengumuman ini?');">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="p-2 text-red-600 hover:bg-red-50 rounded-xl transition-colors" title="Hapus">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </form>
+                    </div>
                 </div>
                 @empty
                 <div class="text-center py-10">

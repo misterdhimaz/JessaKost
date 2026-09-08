@@ -19,7 +19,7 @@
                 </div>
 
                 <div class="p-8">
-                    <form action="#" method="POST" class="space-y-6">
+                    <form action="{{ route('admin.electricity.store') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
                         @csrf
 
                         <div>
@@ -27,7 +27,7 @@
                             <select id="room_id" name="room_id" class="block w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:ring-2 focus:ring-jessa-maroon/20 focus:border-jessa-maroon focus:bg-white transition-all shadow-sm">
                                 <option value="">-- Pilih Kamar --</option>
                                 @foreach($rooms as $room)
-                                    <option value="{{ $room->id }}">Kamar {{ $room->room_number }} ({{ $room->leases->where('status', 'active')->first()->user->name ?? 'Penghuni' }})</option>
+                                    <option value="{{ $room->id }}">Kamar {{ $room->room_number }} ({{ $room->leases->where('status', 'active')->first()?->user?->name ?? 'Penghuni' }})</option>
                                 @endforeach
                             </select>
                         </div>

@@ -13,31 +13,32 @@
 
     <div class="space-y-8">
 
-        {{-- ─── Status Kamar Banner ─── --}}
-        @if($lease)
-        <div class="bg-jessa-maroon rounded-3xl overflow-hidden relative">
-            <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(white 1px, transparent 1px); background-size: 24px 24px;"></div>
-            <div class="relative z-10 p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+        {{-- Hero Banner --}}
+        <div class="relative bg-gradient-to-r from-jessa-maroonDark via-jessa-maroon to-red-600 rounded-[2.5rem] p-8 md:p-12 overflow-hidden shadow-2xl shadow-jessa-maroon/20 group">
+            <div class="absolute top-0 right-0 w-64 h-64 bg-white opacity-10 rounded-full filter blur-3xl transform translate-x-1/2 -translate-y-1/2 group-hover:scale-150 transition-transform duration-1000"></div>
+            <div class="absolute bottom-0 left-0 w-48 h-48 bg-jessa-cream opacity-20 rounded-full filter blur-2xl transform -translate-x-1/2 translate-y-1/2 group-hover:scale-150 transition-transform duration-1000"></div>
+
+            <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div>
-                    <span class="inline-flex items-center gap-2 bg-green-400/20 text-green-300 border border-green-400/30 px-3 py-1 rounded-full text-xs font-bold mb-4">
-                        <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span> Kontrak Aktif
+                    <span class="inline-block py-1 px-3 rounded-full bg-white/10 border border-white/20 text-white/90 text-xs font-bold uppercase tracking-widest mb-4 backdrop-blur-sm shadow-sm">
+                        <i class="fas fa-home text-green-300 mr-1"></i> Portal Penghuni
                     </span>
-                    <h3 class="text-3xl font-extrabold text-white tracking-tight">Kamar {{ $lease->room?->room_number ?? '-' }}</h3>
-                    <p class="text-jessa-cream/80 font-medium mt-1">Jessa Kost · Indralaya, Ogan Ilir</p>
+                    <h2 class="text-3xl md:text-5xl font-black text-white mb-2 tracking-tight">Halo, {{ explode(' ', Auth::user()->name)[0] }}! <span class="animate-wave inline-block origin-bottom-right">👋</span></h2>
+                    <p class="text-white/80 font-medium text-sm md:text-base max-w-xl">Selamat datang di beranda personal Anda. Pantau tagihan dan info kost dari sini.</p>
                 </div>
-                <div class="grid grid-cols-2 gap-4 w-full md:w-auto">
-                    <div class="bg-white/10 backdrop-blur-md rounded-2xl px-5 py-4 border border-white/10 text-center">
-                        <p class="text-white/60 text-xs font-bold uppercase tracking-widest mb-1">Kontrak Hingga</p>
-                        <p class="text-white font-extrabold text-lg">{{ \Carbon\Carbon::parse($lease->end_date)->format('d M Y') }}</p>
-                    </div>
-                    <div class="bg-white/10 backdrop-blur-md rounded-2xl px-5 py-4 border border-white/10 text-center">
-                        <p class="text-white/60 text-xs font-bold uppercase tracking-widest mb-1">Sewa Bulanan</p>
-                        <p class="text-white font-extrabold text-lg">Rp {{ number_format($lease->room?->price_per_month ?? 0, 0, ',', '.') }}</p>
+
+                @if($lease)
+                <div class="hidden md:flex gap-3">
+                    <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-4 text-center text-white min-w-[120px] flex flex-col items-center justify-center">
+                        <p class="text-3xl font-black">{{ $lease->room->room_number }}</p>
+                        <p class="text-[10px] uppercase tracking-wider opacity-80 font-bold mt-1">Kamar Anda</p>
                     </div>
                 </div>
+                @endif
             </div>
         </div>
-        @else
+
+        @if(!$lease)
         <div class="bg-white rounded-3xl border border-yellow-100 p-8 flex items-center gap-6 shadow-sm">
             <div class="w-16 h-16 bg-yellow-50 rounded-2xl flex items-center justify-center text-yellow-500 text-2xl shrink-0">
                 <i class="fas fa-exclamation-circle"></i>
@@ -49,17 +50,15 @@
         </div>
         @endif
 
-        {{-- ─── Tagihan Belum Lunas + Quick Menu ─── --}}
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-
             <div class="lg:col-span-2 space-y-4">
-                <div class="flex items-center justify-between">
-                    <h3 class="font-extrabold text-lg text-gray-900"><i class="fas fa-file-invoice-dollar text-red-400 mr-2"></i>Tagihan Menunggu</h3>
-                    <a href="{{ route('tenant.bills.index') }}" class="text-sm font-bold text-jessa-maroon hover:underline">Lihat Semua →</a>
+                <div class="flex items-center justify-between mb-2">
+                    <h3 class="font-extrabold text-lg text-gray-900"><i class="fas fa-file-invoice-dollar text-jessa-maroon mr-2"></i>Tagihan Belum Lunas</h3>
+                    <a href="{{ route('tenant.bills.index') }}" class="text-xs font-bold text-gray-500 hover:text-jessa-maroon transition-colors">Lihat Semua</a>
                 </div>
 
                 @forelse($bills as $bill)
-                <div class="bg-white rounded-2xl border border-red-100 p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-sm hover:shadow-md transition-shadow">
+                <div class="bg-white rounded-2xl border border-gray-100 p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-sm hover:shadow-md transition-shadow hover:-translate-y-0.5">
                     <div class="flex items-center gap-4">
                         <div class="w-12 h-12 bg-{{ $bill->type_color }}/10 rounded-xl flex items-center justify-center text-{{ $bill->type_color }} text-xl shrink-0">
                             <i class="fas {{ $bill->type_icon }}"></i>
@@ -73,7 +72,7 @@
                         <span class="inline-flex items-center gap-1.5 bg-red-50 text-red-600 border border-red-100 px-3 py-1 rounded-full text-xs font-bold">
                             <span class="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse"></span> Belum Lunas
                         </span>
-                        <a href="#" class="bg-jessa-maroon text-white font-bold px-4 py-2 rounded-xl hover:bg-jessa-maroonDark transition-colors text-sm shadow-sm">
+                        <a href="{{ route('tenant.bills.index') }}" class="bg-jessa-maroon text-white font-bold px-4 py-2 rounded-xl hover:bg-jessa-maroonDark transition-colors text-sm shadow-sm">
                             Bayar
                         </a>
                     </div>
@@ -89,11 +88,10 @@
                 @endforelse
             </div>
 
-            {{-- Quick Info Cards --}}
             <div class="space-y-4">
                 <h3 class="font-extrabold text-lg text-gray-900"><i class="fas fa-star text-yellow-400 mr-2"></i>Info Penting</h3>
 
-                <div class="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm">
+                <div class="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm hover:-translate-y-1 transition-transform cursor-default">
                     <div class="flex items-center gap-3 mb-3">
                         <div class="w-9 h-9 bg-purple-50 rounded-lg flex items-center justify-center text-purple-500"><i class="fas fa-wifi"></i></div>
                         <p class="font-bold text-gray-900 text-sm">WiFi Kost</p>
@@ -105,7 +103,7 @@
                     </div>
                 </div>
 
-                <div class="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm">
+                <div class="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm hover:-translate-y-1 transition-transform cursor-default">
                     <div class="flex items-center gap-3 mb-3">
                         <div class="w-9 h-9 bg-blue-50 rounded-lg flex items-center justify-center text-blue-500"><i class="fas fa-phone-alt"></i></div>
                         <p class="font-bold text-gray-900 text-sm">Kontak Darurat</p>
@@ -114,22 +112,12 @@
                     <p class="text-xs text-gray-400 font-medium">Bapak Joko (Pengelola)</p>
                 </div>
 
-                <div class="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm">
-                    <div class="flex items-center gap-3 mb-3">
-                        <div class="w-9 h-9 bg-yellow-50 rounded-lg flex items-center justify-center text-yellow-500"><i class="fas fa-utensils"></i></div>
-                        <p class="font-bold text-gray-900 text-sm">Warung & Makan</p>
-                    </div>
-                    <p class="text-gray-700 font-semibold text-sm">Buka 07.00 – 21.00</p>
-                    <p class="text-xs text-green-600 font-bold mt-1">🎉 Es teh gratis tiap Jumat!</p>
-                </div>
-
                 <a href="https://wa.me/6281234567890" target="_blank" class="flex items-center justify-center gap-2 w-full bg-green-50 text-green-700 border border-green-100 font-bold py-3.5 px-4 rounded-2xl hover:bg-green-500 hover:text-white transition-all text-sm shadow-sm">
                     <i class="fab fa-whatsapp text-lg"></i> Chat Admin via WhatsApp
                 </a>
             </div>
         </div>
 
-        {{-- Quick Access Section --}}
         <div class="mt-8">
             <h3 class="font-extrabold text-lg text-gray-900 mb-4"><i class="fas fa-bolt text-jessa-maroon mr-2"></i>Akses Cepat</h3>
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">

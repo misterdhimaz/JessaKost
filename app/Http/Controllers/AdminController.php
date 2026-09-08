@@ -14,31 +14,253 @@ class AdminController extends Controller
         $totalRooms = $rooms->count();
         $occupiedRooms = $rooms->where('status', 'occupied')->count();
         $emptyRooms = $totalRooms - $occupiedRooms;
-        $activeTickets = Ticket::where('status', '!=', 'resolved')->count();
-        $todayGuests = GuestLog::whereDate('visit_date', today())->count();
+        $occupancyRate = $totalRooms > 0 ? round(($occupiedRooms / $totalRooms) * 100) : 0;
 
-        return view('admin.dashboard', compact('rooms', 'totalRooms', 'occupiedRooms', 'emptyRooms', 'activeTickets', 'todayGuests'));
+        $activeTickets = Ticket::where('status', '!=', 'resolved')->count();
+        $recentTickets = Ticket::with('user', 'room')->latest()->take(5)->get();
+
+        $todayGuests = GuestLog::whereDate('visit_date', today())->count();
+        $recentGuests = GuestLog::latest('created_at')->take(4)->get();
+
+        // Financial Data (Current Month)
+        $currentMonth = now()->format('Y-m');
+        $thisMonthBills = \App\Models\Bill::where('billing_period', $currentMonth)->get();
+
+        $totalRevenue = $thisMonthBills->where('status', 'paid')->sum('amount');
+        $pendingRevenue = $thisMonthBills->where('status', 'pending')->sum('amount');
+        $unpaidBillsCount = $thisMonthBills->where('status', 'pending')->count();
+
+        $recentPayments = \App\Models\Bill::with('lease.user', 'lease.room')
+            ->where('status', 'paid')
+            ->orderBy('paid_at', 'desc')
+            ->take(5)
+            ->get();
+
+        return view('admin.dashboard', compact(
+            'rooms', 'totalRooms', 'occupiedRooms', 'emptyRooms', 'occupancyRate',
+            'activeTickets', 'recentTickets',
+            'todayGuests', 'recentGuests',
+            'totalRevenue', 'pendingRevenue', 'unpaidBillsCount', 'recentPayments'
+        ));
     }
 
-    public function electricityInput()
+    public function electricityIndex()
     {
-        $rooms = Room::where('status', 'occupied')->get();
+        // Get all electricity bills for the current month, or recent ones
+        $electricityBills = \App\Models\Bill::with('lease.room', 'lease.user')
+            ->where('type', 'electricity')
+            ->latest()
+            ->paginate(15);
+
+        return view('admin.electricity.index', compact('electricityBills'));
+    }
+
+    public function electricityCreate()
+    {
+        $rooms = Room::with(['leases' => function($query) {
+            $query->where('status', 'active')->with('user');
+        }])->where('status', 'occupied')->get();
 
         return view('admin.electricity.create', compact('rooms'));
     }
 
+    public function storeElectricity(\Illuminate\Http\Request $request)
+    {
+        $request->validate([
+            'room_id' => 'required|exists:rooms,id',
+            'reading_date' => 'required|date',
+            'kwh_value' => 'required|numeric|min:0',
+            'file-upload' => 'nullable|image|max:10240',
+        ]);
+
+        $room = Room::with(['leases' => function($q) {
+            $q->where('status', 'active');
+        }])->findOrFail($request->room_id);
+
+        $activeLease = $room->leases->first();
+        if (!$activeLease) {
+            return back()->with('error', 'Kamar ini tidak memiliki penghuni aktif.');
+        }
+
+        // Cari pencatatan bulan sebelumnya
+        $lastReading = \App\Models\ElectricityReading::where('room_id', $room->id)
+            ->latest('reading_month')
+            ->first();
+
+        $kwhDifference = $lastReading ? max(0, $request->kwh_value - $lastReading->kwh_used) : $request->kwh_value;
+        $tarifPerKwh = 1500; // Contoh tarif
+        $amount = $kwhDifference * $tarifPerKwh;
+
+        // Simpan pencatatan
+        \App\Models\ElectricityReading::create([
+            'room_id' => $room->id,
+            'reading_month' => \Carbon\Carbon::parse($request->reading_date)->format('Y-m'),
+            'kwh_used' => $request->kwh_value,
+            'image_path' => $request->hasFile('file-upload') ? $request->file('file-upload')->store('electricity', 'public') : null,
+        ]);
+
+        // Buat tagihan baru untuk tenant
+        \App\Models\Bill::create([
+            'lease_id' => $activeLease->id,
+            'amount' => $amount,
+            'type' => 'electricity',
+            'status' => 'unpaid',
+            'billing_period' => \Carbon\Carbon::parse($request->reading_date)->format('Y-m'),
+            'due_date' => \Carbon\Carbon::parse($request->reading_date)->addDays(10), // Jatuh tempo 10 hari setelah pencatatan
+        ]);
+
+        return redirect()->route('admin.electricity.index')->with('success', 'Pencatatan meteran berhasil dan tagihan listrik telah dibuat.');
+    }
+
+    public function electricityShow(\App\Models\Bill $bill)
+    {
+        $bill->load('lease.room', 'lease.user');
+
+        // Find corresponding reading
+        $reading = \App\Models\ElectricityReading::where('room_id', $bill->lease->room_id)
+            ->where('reading_month', $bill->billing_period)
+            ->first();
+
+        return view('admin.electricity.show', compact('bill', 'reading'));
+    }
+
+    public function uploadTokenProof(\Illuminate\Http\Request $request, \App\Models\Bill $bill)
+    {
+        $request->validate([
+            'token_code' => 'required|string',
+            'token_proof' => 'required|image|max:5120',
+        ]);
+
+        $path = $request->file('token_proof')->store('tokens', 'public');
+
+        $bill->update([
+            'token_code' => $request->token_code,
+            'token_proof_path' => $path,
+        ]);
+
+        return back()->with('success', 'Bukti pengisian token berhasil diunggah.');
+    }
+
     public function rooms()
     {
-        $rooms = Room::all();
-
+        $rooms = Room::orderBy('room_number')->get();
         return view('admin.rooms.index', compact('rooms'));
     }
 
-    public function guests()
+    public function createRoom()
     {
-        $guests = GuestLog::latest('visit_date')->get();
+        return view('admin.rooms.create');
+    }
 
-        return view('admin.guests.index', compact('guests'));
+    public function storeRoom(\Illuminate\Http\Request $request)
+    {
+        $validated = $request->validate([
+            'room_number' => 'required|string|unique:rooms,room_number',
+            'price_per_month' => 'required|numeric|min:0',
+            'status' => 'required|in:available,occupied,maintenance',
+            'description' => 'nullable|string',
+            'cover_image' => 'nullable|image|max:5120',
+            'detail_images.*' => 'nullable|image|max:5120',
+        ]);
+
+        $room = new Room();
+        $room->room_number = $validated['room_number'];
+        $room->price_per_month = $validated['price_per_month'];
+        $room->status = $validated['status'];
+        $room->description = $validated['description'];
+
+        if ($request->hasFile('cover_image')) {
+            $room->cover_image_path = $request->file('cover_image')->store('rooms', 'public');
+        }
+
+        if ($request->hasFile('detail_images')) {
+            $paths = [];
+            foreach ($request->file('detail_images') as $file) {
+                $paths[] = $file->store('rooms/details', 'public');
+            }
+            $room->detail_image_paths = $paths;
+        }
+
+        $room->save();
+
+        return redirect()->route('admin.rooms.index')->with('success', 'Kamar berhasil ditambahkan.');
+    }
+
+    public function editRoom(Room $room)
+    {
+        return view('admin.rooms.edit', compact('room'));
+    }
+
+    public function updateRoom(\Illuminate\Http\Request $request, Room $room)
+    {
+        $validated = $request->validate([
+            'room_number' => 'required|string|unique:rooms,room_number,' . $room->id,
+            'price_per_month' => 'required|numeric|min:0',
+            'status' => 'required|in:available,occupied,maintenance',
+            'description' => 'nullable|string',
+            'cover_image' => 'nullable|image|max:5120',
+            'detail_images.*' => 'nullable|image|max:5120',
+        ]);
+
+        $room->room_number = $validated['room_number'];
+        $room->price_per_month = $validated['price_per_month'];
+        $room->status = $validated['status'];
+        $room->description = $validated['description'];
+
+        if ($request->hasFile('cover_image')) {
+            $room->cover_image_path = $request->file('cover_image')->store('rooms', 'public');
+        }
+
+        if ($request->hasFile('detail_images')) {
+            $paths = $room->detail_image_paths ?? [];
+            foreach ($request->file('detail_images') as $file) {
+                $paths[] = $file->store('rooms/details', 'public');
+            }
+            $room->detail_image_paths = $paths;
+        }
+
+        $room->save();
+
+        return redirect()->route('admin.rooms.index')->with('success', 'Kamar berhasil diperbarui.');
+    }
+
+    public function destroyRoom(Room $room)
+    {
+        // Optionally delete files from storage here
+        $room->delete();
+        return redirect()->route('admin.rooms.index')->with('success', 'Kamar berhasil dihapus.');
+    }
+
+    public function guests(\Illuminate\Http\Request $request)
+    {
+        $query = GuestLog::with(['tenant.leases' => function ($q) {
+            $q->where('status', 'active')->with('room');
+        }])->latest('visit_date');
+
+        if ($request->filled('search')) {
+            $query->where('visitor_name', 'like', '%' . $request->search . '%')
+                  ->orWhere('purpose', 'like', '%' . $request->search . '%');
+        }
+
+        if ($request->filled('type')) {
+            if ($request->type == 'overnight') {
+                $query->where('is_overnight', true);
+            } elseif ($request->type == 'visit') {
+                $query->where('is_overnight', false);
+            }
+        }
+
+        if ($request->filled('room_id')) {
+            $roomId = $request->room_id;
+            $query->whereHas('tenant.leases', function($q) use ($roomId) {
+                $q->where('room_id', $roomId)->where('status', 'active');
+            });
+        }
+
+        $guests = $query->get();
+        $rooms = Room::orderBy('room_number')->get();
+
+        return view('admin.guests.index', compact('guests', 'rooms'));
     }
 
     public function tickets()
@@ -64,13 +286,40 @@ class AdminController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'body' => 'required|string',
-            'priority' => 'required|in:normal,important,urgent',
-            'is_active' => 'boolean'
+            'priority' => 'required|in:low,normal,high',
         ]);
 
         $validated['user_id'] = auth()->id();
+        $validated['is_active'] = true;
+
         \App\Models\Announcement::create($validated);
 
-        return redirect()->route('admin.announcements.index')->with('success', 'Pengumuman berhasil ditambahkan');
+        return redirect()->route('admin.announcements.index')->with('success', 'Pengumuman berhasil dibuat.');
+    }
+
+    public function editAnnouncement(\App\Models\Announcement $announcement)
+    {
+        return view('admin.announcements.edit', compact('announcement'));
+    }
+
+    public function updateAnnouncement(\Illuminate\Http\Request $request, \App\Models\Announcement $announcement)
+    {
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'body' => 'required|string',
+            'priority' => 'required|in:low,normal,high',
+            'is_active' => 'boolean',
+        ]);
+
+        $announcement->update($validated);
+
+        return redirect()->route('admin.announcements.index')->with('success', 'Pengumuman berhasil diperbarui.');
+    }
+
+    public function destroyAnnouncement(\App\Models\Announcement $announcement)
+    {
+        $announcement->delete();
+
+        return redirect()->route('admin.announcements.index')->with('success', 'Pengumuman berhasil dihapus.');
     }
 }

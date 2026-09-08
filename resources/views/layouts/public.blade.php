@@ -21,7 +21,7 @@
     <style>
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: #FBF3D5; /* Membawa kembali cream asli tapi dengan tekstur clean */
+            background-color: #FAFAFA; /* Off-white for a cleaner, wider look */
         }
 
         .blob-shape {
@@ -29,10 +29,10 @@
         }
 
         .glass-nav {
-            background: rgba(251, 243, 213, 0.9);
+            background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
-            border-bottom: 1px solid rgba(146, 0, 58, 0.1);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
         }
 
         /* Modern Card Styling */
@@ -52,59 +52,59 @@
             border-color: rgba(146, 0, 58, 0.2);
         }
 
-        .modern-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 4px;
-            background: #92003A;
-            transform: scaleX(0);
-            transform-origin: left;
-            transition: transform 0.4s ease;
-        }
-
         .modern-card:hover::before {
             transform: scaleX(1);
         }
+
+        @keyframes float {
+            0% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+            100% { transform: translateY(0px) rotate(0deg); }
+        }
+        @keyframes pulse-slow {
+            0%, 100% { opacity: 0.6; transform: scale(1); }
+            50% { opacity: 0.3; transform: scale(1.05); }
+        }
+        .animate-float { animation: float 6s ease-in-out infinite; }
+        .animate-pulse-slow { animation: pulse-slow 8s ease-in-out infinite; }
     </style>
 </head>
-<body class="text-gray-800 selection:bg-jessa-maroon/20 selection:text-jessa-maroon flex flex-col min-h-screen relative overflow-x-hidden" x-data="{ scrolled: false, mobileMenuOpen: false }" @scroll.window="scrolled = (window.pageYOffset > 20)">
+<body class="text-gray-800 selection:bg-jessa-maroon/20 selection:text-jessa-maroon flex flex-col min-h-screen relative overflow-x-hidden bg-white" x-data="{ mobileMenuOpen: false }">
 
     <!-- Background Pattern Halus -->
-    <div class="fixed inset-0 pointer-events-none z-[-1]" style="background-image: radial-gradient(rgba(146,0,58,0.04) 2px, transparent 2px); background-size: 32px 32px;"></div>
+    <div class="fixed inset-0 pointer-events-none z-[-1]" style="background-image: radial-gradient(rgba(146,0,58,0.03) 2px, transparent 2px); background-size: 40px 40px;"></div>
 
-    <!-- Navbar -->
-    <nav :class="{ 'glass-nav shadow-sm py-3': scrolled, 'bg-transparent py-6': !scrolled }" class="fixed w-full z-50 transition-all duration-500">
+    <!-- Navbar Fix Tetap (Dominan Putih) -->
+    <nav class="fixed w-full z-50 bg-white/95 backdrop-blur-md shadow-[0_2px_15px_rgba(0,0,0,0.03)] border-b border-gray-100 py-3 md:py-4">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center">
                 <div class="flex items-center group">
-                    <a href="{{ route('home') }}" class="text-2xl font-extrabold tracking-tighter text-jessa-maroon transition-all transform flex items-center gap-2">
-                        <div class="w-10 h-10 rounded-xl bg-jessa-maroon text-white flex items-center justify-center shadow-lg group-hover:scale-105 transition-all duration-300">
-                            <i class="fas fa-leaf"></i>
+                    <a href="{{ route('home') }}" class="text-xl md:text-2xl font-extrabold tracking-tighter text-jessa-maroon transition-all transform flex items-center gap-2">
+                        <div class="w-8 h-8 md:w-10 md:h-10 rounded-xl bg-jessa-maroon text-white flex items-center justify-center shadow-lg group-hover:scale-105 transition-all duration-300">
+                            <i class="fas fa-leaf text-sm md:text-base"></i>
                         </div>
-                        <span>Jessa<span class="font-normal text-gray-600">Kost</span></span>
+                        Jessa<span class="font-normal text-gray-600">Kost</span>
                     </a>
                 </div>
 
                 <!-- Desktop Menu -->
-                <div class="hidden md:flex space-x-2 items-center bg-white/70 px-3 py-1.5 rounded-full backdrop-blur-md border border-white shadow-sm">
-                    <a href="{{ route('home') }}" class="px-5 py-2.5 rounded-full text-sm font-bold transition-all duration-300 {{ request()->routeIs('home') ? 'bg-jessa-maroon text-white shadow-md' : 'text-gray-600 hover:text-jessa-maroon hover:bg-jessa-maroon/5' }}">Beranda</a>
-                    <a href="{{ route('profil') }}" class="px-5 py-2.5 rounded-full text-sm font-bold transition-all duration-300 {{ request()->routeIs('profil') ? 'bg-jessa-maroon text-white shadow-md' : 'text-gray-600 hover:text-jessa-maroon hover:bg-jessa-maroon/5' }}">Profil</a>
-                    <a href="{{ route('fasilitas') }}" class="px-5 py-2.5 rounded-full text-sm font-bold transition-all duration-300 {{ request()->routeIs('fasilitas') ? 'bg-jessa-maroon text-white shadow-md' : 'text-gray-600 hover:text-jessa-maroon hover:bg-jessa-maroon/5' }}">Fasilitas</a>
-                    <a href="{{ route('kamar') }}" class="px-5 py-2.5 rounded-full text-sm font-bold transition-all duration-300 {{ request()->routeIs('kamar') ? 'bg-jessa-maroon text-white shadow-md' : 'text-gray-600 hover:text-jessa-maroon hover:bg-jessa-maroon/5' }}">Kamar</a>
-                    <a href="{{ route('kontak') }}" class="px-5 py-2.5 rounded-full text-sm font-bold transition-all duration-300 {{ request()->routeIs('kontak') ? 'bg-jessa-maroon text-white shadow-md' : 'text-gray-600 hover:text-jessa-maroon hover:bg-jessa-maroon/5' }}">Kontak</a>
+                <div class="hidden md:flex space-x-1 items-center bg-gray-50/50 px-2 py-1.5 rounded-full border border-gray-100">
+                    <a href="{{ route('home') }}" class="px-5 py-2.5 rounded-full text-sm font-bold transition-all duration-300 {{ request()->routeIs('home') ? 'bg-jessa-maroon text-white shadow-md' : 'text-gray-600 hover:text-jessa-maroon hover:bg-white' }}">Beranda</a>
+                    <a href="{{ route('profil') }}" class="px-5 py-2.5 rounded-full text-sm font-bold transition-all duration-300 {{ request()->routeIs('profil') ? 'bg-jessa-maroon text-white shadow-md' : 'text-gray-600 hover:text-jessa-maroon hover:bg-white' }}">Profil</a>
+                    <a href="{{ route('fasilitas') }}" class="px-5 py-2.5 rounded-full text-sm font-bold transition-all duration-300 {{ request()->routeIs('fasilitas') ? 'bg-jessa-maroon text-white shadow-md' : 'text-gray-600 hover:text-jessa-maroon hover:bg-white' }}">Fasilitas</a>
+                    <a href="{{ route('kamar') }}" class="px-5 py-2.5 rounded-full text-sm font-bold transition-all duration-300 {{ request()->routeIs('kamar') ? 'bg-jessa-maroon text-white shadow-md' : 'text-gray-600 hover:text-jessa-maroon hover:bg-white' }}">Kamar</a>
+                    <a href="{{ route('kontak') }}" class="px-5 py-2.5 rounded-full text-sm font-bold transition-all duration-300 {{ request()->routeIs('kontak') ? 'bg-jessa-maroon text-white shadow-md' : 'text-gray-600 hover:text-jessa-maroon hover:bg-white' }}">Kontak</a>
                 </div>
 
-                <div class="hidden md:flex">
+                <!-- Right Actions -->
+                <div class="hidden md:flex items-center space-x-4">
                     @if (Route::has('login'))
                         @auth
-                            <a href="{{ route('dashboard') }}" class="px-6 py-2.5 rounded-full font-bold transition-all duration-300 text-jessa-maroon bg-white border border-jessa-maroon/20 hover:bg-jessa-maroon hover:text-white shadow-md flex items-center gap-2">
+                            <a href="{{ route('dashboard') }}" class="px-6 py-2.5 rounded-full font-bold transition-all duration-300 text-jessa-maroon bg-white border border-gray-200 hover:border-jessa-maroon hover:bg-jessa-maroon/5 shadow-sm flex items-center gap-2">
                                 Dasbor <i class="fas fa-arrow-right text-xs"></i>
                             </a>
                         @else
-                            <a href="{{ route('login') }}" class="px-6 py-2.5 rounded-full font-bold transition-all duration-300 text-white bg-jessa-maroon hover:bg-jessa-maroonDark shadow-lg flex items-center gap-2">
+                            <a href="{{ route('login') }}" class="px-6 py-2.5 rounded-full font-bold transition-all duration-300 text-white bg-jessa-maroon hover:bg-jessa-maroonDark shadow-lg flex items-center gap-2 hover:-translate-y-0.5">
                                 Login <i class="fas fa-sign-in-alt text-xs"></i>
                             </a>
                         @endauth
@@ -113,7 +113,7 @@
 
                 <!-- Mobile menu button -->
                 <div class="md:hidden flex items-center">
-                    <button @click="mobileMenuOpen = !mobileMenuOpen" class="w-10 h-10 rounded-full bg-white shadow-sm flex items-center justify-center outline-none text-jessa-maroon">
+                    <button @click="mobileMenuOpen = !mobileMenuOpen" class="w-10 h-10 rounded-full bg-gray-50 shadow-sm flex items-center justify-center outline-none text-jessa-maroon border border-gray-100">
                         <i class="fas fa-bars text-xl" x-show="!mobileMenuOpen"></i>
                         <i class="fas fa-times text-xl" x-show="mobileMenuOpen" x-cloak></i>
                     </button>
@@ -129,25 +129,40 @@
              x-transition:leave="transition ease-in duration-200"
              x-transition:leave-start="opacity-100 translate-y-0"
              x-transition:leave-end="opacity-0 -translate-y-4"
-             class="md:hidden bg-white absolute w-full shadow-xl rounded-b-3xl border-t border-gray-100" x-cloak>
-            <div class="px-6 py-6 space-y-2">
-                <a href="{{ route('home') }}" class="block px-4 py-3 rounded-xl text-sm font-bold transition-colors {{ request()->routeIs('home') ? 'bg-jessa-maroon text-white' : 'text-gray-600 hover:bg-gray-50' }}">Beranda</a>
-                <a href="{{ route('profil') }}" class="block px-4 py-3 rounded-xl text-sm font-bold transition-colors {{ request()->routeIs('profil') ? 'bg-jessa-maroon text-white' : 'text-gray-600 hover:bg-gray-50' }}">Profil</a>
-                <a href="{{ route('fasilitas') }}" class="block px-4 py-3 rounded-xl text-sm font-bold transition-colors {{ request()->routeIs('fasilitas') ? 'bg-jessa-maroon text-white' : 'text-gray-600 hover:bg-gray-50' }}">Fasilitas</a>
-                <a href="{{ route('kamar') }}" class="block px-4 py-3 rounded-xl text-sm font-bold transition-colors {{ request()->routeIs('kamar') ? 'bg-jessa-maroon text-white' : 'text-gray-600 hover:bg-gray-50' }}">Kamar</a>
-                <a href="{{ route('kontak') }}" class="block px-4 py-3 rounded-xl text-sm font-bold transition-colors {{ request()->routeIs('kontak') ? 'bg-jessa-maroon text-white' : 'text-gray-600 hover:bg-gray-50' }}">Kontak</a>
+             class="md:hidden bg-white absolute w-full shadow-2xl rounded-b-3xl border-t border-gray-100 top-full left-0" x-cloak>
+            <div class="px-4 py-6 space-y-2 max-h-[70vh] overflow-y-auto">
+                <a href="{{ route('home') }}" class="block px-5 py-4 rounded-2xl text-sm font-bold transition-colors {{ request()->routeIs('home') ? 'bg-jessa-maroon text-white shadow-md' : 'text-gray-600 hover:bg-gray-50 border border-transparent hover:border-gray-100' }}">Beranda</a>
+                <a href="{{ route('profil') }}" class="block px-5 py-4 rounded-2xl text-sm font-bold transition-colors {{ request()->routeIs('profil') ? 'bg-jessa-maroon text-white shadow-md' : 'text-gray-600 hover:bg-gray-50 border border-transparent hover:border-gray-100' }}">Profil</a>
+                <a href="{{ route('fasilitas') }}" class="block px-5 py-4 rounded-2xl text-sm font-bold transition-colors {{ request()->routeIs('fasilitas') ? 'bg-jessa-maroon text-white shadow-md' : 'text-gray-600 hover:bg-gray-50 border border-transparent hover:border-gray-100' }}">Fasilitas</a>
+                <a href="{{ route('kamar') }}" class="block px-5 py-4 rounded-2xl text-sm font-bold transition-colors {{ request()->routeIs('kamar') ? 'bg-jessa-maroon text-white shadow-md' : 'text-gray-600 hover:bg-gray-50 border border-transparent hover:border-gray-100' }}">Kamar</a>
+                <a href="{{ route('kontak') }}" class="block px-5 py-4 rounded-2xl text-sm font-bold transition-colors {{ request()->routeIs('kontak') ? 'bg-jessa-maroon text-white shadow-md' : 'text-gray-600 hover:bg-gray-50 border border-transparent hover:border-gray-100' }}">Kontak</a>
+
+                @if (Route::has('login'))
+                    <div class="pt-4 mt-2 border-t border-gray-100">
+                    @auth
+                        <a href="{{ route('dashboard') }}" class="block px-5 py-4 text-center rounded-2xl text-sm font-bold transition-colors text-jessa-maroon bg-jessa-maroon/5 border border-jessa-maroon/20">Dasbor Aplikasi</a>
+                    @else
+                        <a href="{{ route('login') }}" class="block px-5 py-4 text-center rounded-2xl text-sm font-bold transition-colors text-white bg-jessa-maroon shadow-lg">Login ke Sistem</a>
+                    @endauth
+                    </div>
+                @endif
             </div>
         </div>
     </nav>
 
     <!-- Page Content -->
-    <main class="flex-grow pt-24 z-10 relative">
+    <main class="flex-grow pt-[80px] md:pt-[90px]">
         @yield('content')
     </main>
 
     <!-- UI/UX Solid Footer -->
-    <footer class="relative bg-white pt-20 pb-10 mt-auto z-10 rounded-t-[3rem] shadow-[0_-10px_40px_rgba(0,0,0,0.03)] mx-2 sm:mx-4">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <footer class="relative bg-white pt-24 pb-10 mt-auto z-10 rounded-t-[3rem] sm:rounded-t-[4rem] shadow-[0_-15px_50px_rgba(0,0,0,0.03)] mx-0 sm:mx-4 border-t-8 border-jessa-cream overflow-hidden">
+
+        <!-- Background Ornaments Footer -->
+        <div class="absolute bottom-0 right-0 w-64 h-64 bg-jessa-maroon/5 rounded-full blur-[80px] pointer-events-none"></div>
+        <div class="absolute top-10 left-10 w-32 h-32 bg-jessa-cream/60 rounded-full blur-[40px] pointer-events-none animate-pulse-slow"></div>
+
+        <div class="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
             <div class="grid grid-cols-1 md:grid-cols-12 gap-12 mb-16 relative">
                 <div class="md:col-span-5">
                     <a href="{{ route('home') }}" class="text-3xl font-extrabold tracking-tighter text-jessa-maroon mb-6 block flex items-center gap-2">

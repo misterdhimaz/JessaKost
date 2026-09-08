@@ -47,6 +47,57 @@ class TenantController extends Controller
         return view('tenant.bills.index', compact('bills', 'lease'));
     }
 
+    public function payBill(Request $request, Bill $bill)
+    {
+        $user = $request->user();
+        $lease = Lease::where('user_id', $user->id)->where('is_active', true)->first();
+
+        if (!$lease || $bill->lease_id !== $lease->id) {
+            abort(403, 'Unauthorized to pay this bill.');
+        }
+
+        if ($bill->status === 'paid') {
+            return redirect()->route('tenant.bills.index')->with('success', 'Tagihan ini sudah dibayar.');
+        }
+
+        // Generate Mayar Invoice
+        $apiKey = config('mayar.api_key');
+        $isProduction = config('mayar.is_production');
+        $baseUrl = $isProduction ? 'https://api.mayar.id/hl/v1' : 'https://api.mayar.club/hl/v1';
+
+        // Assuming user has phone in profile, or fallback
+        $mobile = $user->phone ?? '081234567890';
+
+        $typeLabel = $bill->type === 'rent' ? 'Sewa Kamar' : ($bill->type === 'electricity' ? 'Listrik' : 'Tagihan Lainnya');
+
+        $payload = [
+            'name' => $user->name,
+            'email' => $user->email,
+            'mobile' => $mobile,
+            'description' => "Pembayaran Tagihan {$typeLabel} - Jessa Kost",
+            'redirectUrl' => route('tenant.bills.index'),
+            'items' => [
+                [
+                    'quantity' => 1,
+                    'rate' => $bill->amount,
+                    'description' => "Tagihan {$typeLabel} " . \Carbon\Carbon::parse($bill->billing_period)->translatedFormat('F Y')
+                ]
+            ],
+            'extraData' => [
+                'billId' => $bill->id
+            ]
+        ];
+
+        $response = \Illuminate\Support\Facades\Http::withToken($apiKey)->post("{$baseUrl}/invoice/create", $payload);
+
+        if ($response->successful() && isset($response->json()['data']['link'])) {
+            return redirect()->away($response->json()['data']['link']);
+        }
+
+        \Illuminate\Support\Facades\Log::error('Mayar API Error: ' . $response->body());
+        return redirect()->route('tenant.bills.index')->with('error', 'Gagal membuat tautan pembayaran. Pastikan API Key Mayar Anda valid.');
+    }
+
     public function announcements()
     {
         $announcements = \App\Models\Announcement::where('is_active', true)->latest()->get();
@@ -73,14 +124,16 @@ class TenantController extends Controller
             'profile_photo' => 'nullable|image|max:2048',
         ]);
 
-        $user->update(['name' => $validated['name']]);
-
-        $profileData = \Illuminate\Support\Arr::except($validated, ['name', 'profile_photo']);
+        $userUpdate = ['name' => $validated['name']];
 
         if ($request->hasFile('profile_photo')) {
             $path = $request->file('profile_photo')->store('profiles', 'public');
-            $profileData['profile_photo_path'] = $path;
+            $userUpdate['profile_photo_path'] = $path;
         }
+
+        $user->update($userUpdate);
+
+        $profileData = \Illuminate\Support\Arr::except($validated, ['name', 'profile_photo']);
 
         if ($user->tenantProfile) {
             $user->tenantProfile->update($profileData);

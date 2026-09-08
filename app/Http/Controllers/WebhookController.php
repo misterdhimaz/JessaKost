@@ -8,21 +8,27 @@ use Illuminate\Support\Facades\Log;
 
 class WebhookController extends Controller
 {
-    public function handleMidtrans(Request $request)
+    public function handleMayar(Request $request)
     {
-        $orderId = $request->input('order_id');
-        $status = $request->input('transaction_status');
+        Log::info("Mayar Webhook received: ", $request->all());
 
-        Log::info("Webhook received for order: {$orderId}, status: {$status}");
+        $event = $request->input('event');
+        $data = $request->input('data');
 
-        if ($status === 'settlement' || $status === 'capture') {
-            // Mock: order_id format is bill_id_TIMESTAMP
-            $billId = explode('_', $orderId)[0] ?? null;
+        if ($event === 'payment.received' && isset($data['status']) && strtolower($data['status']) === 'paid') {
+            // Check if extraData exists in data or nested inside invoice
+            $extraData = $data['extraData'] ?? $data['invoice']['extraData'] ?? null;
+            $billId = $extraData['billId'] ?? null;
+
             if ($billId) {
-                Bill::where('id', $billId)->update(['status' => 'paid']);
+                $bill = Bill::find($billId);
+                if ($bill) {
+                    $bill->update(['status' => 'paid', 'paid_at' => now()]);
+                    Log::info("Bill {$billId} updated to paid via Mayar Webhook");
+                }
             }
         }
 
-        return response()->json(['message' => 'OK']);
+        return response()->json(['message' => 'OK'], 200);
     }
 }
