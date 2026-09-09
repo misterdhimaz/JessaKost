@@ -19,11 +19,11 @@
     </x-slot>
 
     <div class="space-y-6" x-data="{ photoModalOpen: false, currentPhoto: '', createModalOpen: false }">
-        
+
         {{-- Filter Section --}}
         <div class="bg-white rounded-3xl shadow-sm border border-gray-100 p-6">
             <form method="GET" action="{{ route('admin.guests.index') }}" class="flex flex-col md:flex-row gap-4">
-                
+
                 {{-- Search --}}
                 <div class="flex-1">
                     <div class="relative">
@@ -71,7 +71,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                 @foreach($guests as $guest)
                 <div class="bg-white rounded-[2rem] shadow-sm border border-gray-100 p-6 flex flex-col relative overflow-hidden group hover:shadow-md transition-shadow">
-                    
+
                     {{-- Decorative Top Right --}}
                     @if($guest->is_overnight)
                         <div class="absolute -right-6 -top-6 w-24 h-24 bg-yellow-50 rounded-full opacity-50 group-hover:scale-150 transition-transform duration-500"></div>
@@ -96,7 +96,7 @@
                             <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">Keperluan Kunjungan</p>
                             <p class="text-sm text-gray-700 font-medium">{{ $guest->purpose }}</p>
                         </div>
-                        
+
                         <div class="flex items-center gap-2">
                             <div class="w-8 h-8 rounded-full bg-jessa-cream/50 text-jessa-maroon flex items-center justify-center text-xs border border-jessa-maroon/20">
                                 <i class="fas fa-user-tie"></i>
@@ -104,7 +104,7 @@
                             <div>
                                 <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Dikunjungi / Pelapor</p>
                                 <p class="text-xs font-bold text-gray-900">
-                                    {{ $guest->tenant->name ?? 'Penghuni Tidak Diketahui' }} 
+                                    {{ $guest->tenant->name ?? 'Penghuni Tidak Diketahui' }}
                                     @php
                                         $activeLease = $guest->tenant?->leases?->where('status', 'active')->first();
                                     @endphp

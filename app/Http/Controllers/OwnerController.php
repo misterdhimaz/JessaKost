@@ -86,7 +86,8 @@ class OwnerController extends Controller
 
     public function createUser()
     {
-        return view('owner.users.create');
+        $availableRooms = \App\Models\Room::where('status', 'available')->orderBy('room_number')->get();
+        return view('owner.users.create', compact('availableRooms'));
     }
 
     public function storeUser(\Illuminate\Http\Request $request)
@@ -97,6 +98,7 @@ class OwnerController extends Controller
             'password' => 'required|string|min:8',
             'role' => 'required|in:admin,tenant',
             'phone' => 'nullable|string|max:20',
+            'room_id' => 'required_if:role,tenant|nullable|exists:rooms,id',
         ]);
 
         $user = \App\Models\User::create([
@@ -124,6 +126,9 @@ class OwnerController extends Controller
 
         // Simpan id user ke session
         $request->session()->put('verify_new_user_id', $user->id);
+        if ($validated['role'] === 'tenant' && !empty($validated['room_id'])) {
+            $request->session()->put('verify_new_user_room_id', $validated['room_id']);
+        }
 
         return redirect()->route('owner.users.verify_form')->with('success', 'OTP telah dikirim ke email. Masukkan OTP untuk memverifikasi.');
     }
@@ -135,7 +140,7 @@ class OwnerController extends Controller
         }
         $userId = $request->session()->get('verify_new_user_id');
         $userToVerify = \App\Models\User::find($userId);
-        
+
         return view('owner.users.verify', compact('userToVerify'));
     }
 
@@ -154,8 +159,30 @@ class OwnerController extends Controller
             $user->email_verified_at = now();
             $user->save();
 
+            // Cek apakah ada kamar yang diassign
+            if ($request->session()->has('verify_new_user_room_id')) {
+                $roomId = $request->session()->get('verify_new_user_room_id');
+                $room = \App\Models\Room::find($roomId);
+                
+                if ($room && $room->status === 'available') {
+                    // Buat lease (penyewaan)
+                    \App\Models\Lease::create([
+                        'user_id' => $user->id,
+                        'room_id' => $room->id,
+                        'start_date' => now(),
+                        'end_date' => now()->addMonth(),
+                        'is_active' => true,
+                    ]);
+                    
+                    // Update status kamar jadi occupied
+                    $room->update(['status' => 'occupied']);
+                }
+                
+                $request->session()->forget('verify_new_user_room_id');
+            }
+
             $request->session()->forget('verify_new_user_id');
-            return redirect()->route('owner.users.index')->with('success', 'Pengguna berhasil dibuat dan diverifikasi!');
+            return redirect()->route('owner.users.index')->with('success', 'Pengguna berhasil dibuat, diverifikasi, dan kamar telah diassign!');
         }
 
         return back()->with('error', 'Kode OTP salah atau kedaluwarsa.')->with('verify_new_user_id', $user->id);

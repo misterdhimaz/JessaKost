@@ -15,7 +15,7 @@
         <div class="bg-white rounded-[2rem] shadow-sm border border-gray-100 overflow-hidden">
             <div class="p-6 border-b border-gray-100 bg-gray-50/50 flex flex-col md:flex-row justify-between items-center gap-4">
                 <h3 class="font-extrabold text-gray-900 text-lg">Daftar Penyewaan Kamar</h3>
-                
+
                 <form action="{{ route('owner.payments.index') }}" method="GET" class="flex flex-col md:flex-row gap-3 w-full md:w-auto">
                     <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari nama / kamar..." class="rounded-xl border-gray-200 text-sm focus:ring-jessa-maroon focus:border-jessa-maroon">
                     <select name="status" class="rounded-xl border-gray-200 text-sm focus:ring-jessa-maroon focus:border-jessa-maroon">

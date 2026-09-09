@@ -14,7 +14,7 @@
     <div class="max-w-3xl">
         <div class="bg-white rounded-[2rem] shadow-sm border border-gray-100 overflow-hidden">
             <div class="p-8">
-                <form action="{{ route('owner.users.store') }}" method="POST" class="space-y-6">
+                <form action="{{ route('owner.users.store') }}" method="POST" class="space-y-6" x-data="{ role: '{{ old('role', 'tenant') }}' }">
                     @csrf
 
                     <div>
@@ -39,9 +39,9 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <label class="block font-bold text-gray-900 text-sm mb-2">Peran (Role)</label>
-                            <select name="role" required class="w-full bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-jessa-maroon focus:border-jessa-maroon block p-3 font-medium transition-colors">
-                                <option value="tenant" {{ old('role') == 'tenant' ? 'selected' : '' }}>Penyewa (Tenant)</option>
-                                <option value="admin" {{ old('role') == 'admin' ? 'selected' : '' }}>Admin / Staf</option>
+                            <select name="role" required x-model="role" class="w-full bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-jessa-maroon focus:border-jessa-maroon block p-3 font-medium transition-colors">
+                                <option value="tenant">Penyewa (Tenant)</option>
+                                <option value="admin">Admin / Staf</option>
                             </select>
                             @error('role') <span class="text-red-500 text-xs font-bold mt-1">{{ $message }}</span> @enderror
                         </div>
@@ -50,6 +50,18 @@
                             <input type="password" name="password" required class="w-full bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-jessa-maroon focus:border-jessa-maroon block p-3 font-medium transition-colors" placeholder="Minimal 8 karakter">
                             @error('password') <span class="text-red-500 text-xs font-bold mt-1">{{ $message }}</span> @enderror
                         </div>
+                    </div>
+
+                    <div x-show="role === 'tenant'" x-transition class="bg-blue-50 border border-blue-100 rounded-2xl p-6 mt-6">
+                        <label class="block font-bold text-gray-900 text-sm mb-2">Assign ke Kamar (Opsional)</label>
+                        <p class="text-xs text-gray-500 mb-4">Pilih kamar yang tersedia untuk langsung menghubungkan akun ini dengan kamar tersebut.</p>
+                        <select name="room_id" class="w-full bg-white border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-jessa-maroon focus:border-jessa-maroon block p-3 font-medium transition-colors">
+                            <option value="">-- Jangan Assign Kamar Dulu --</option>
+                            @foreach($availableRooms ?? [] as $room)
+                                <option value="{{ $room->id }}" {{ old('room_id') == $room->id ? 'selected' : '' }}>Kamar {{ $room->room_number }} (Rp {{ number_format($room->price_per_month, 0, ',', '.') }} / bulan)</option>
+                            @endforeach
+                        </select>
+                        @error('room_id') <span class="text-red-500 text-xs font-bold mt-1">{{ $message }}</span> @enderror
                     </div>
 
                     <div class="pt-6 flex items-center justify-end gap-3 border-t border-gray-100">
