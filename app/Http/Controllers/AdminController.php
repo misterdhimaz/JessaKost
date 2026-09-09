@@ -124,6 +124,41 @@ class AdminController extends Controller
         return view('admin.electricity.show', compact('bill', 'reading'));
     }
 
+    public function electricityEdit(\App\Models\Bill $bill)
+    {
+        $bill->load('lease.room', 'lease.user');
+        return view('admin.electricity.edit', compact('bill'));
+    }
+
+    public function electricityUpdate(\Illuminate\Http\Request $request, \App\Models\Bill $bill)
+    {
+        $validated = $request->validate([
+            'amount' => 'required|numeric|min:0',
+            'status' => 'required|in:unpaid,paid',
+            'due_date' => 'required|date',
+        ]);
+
+        $bill->update($validated);
+
+        return redirect()->route('admin.electricity.index')->with('success', 'Tagihan listrik berhasil diperbarui.');
+    }
+
+    public function electricityDestroy(\App\Models\Bill $bill)
+    {
+        // Temukan juga reading yang terkait jika ingin menghapus
+        $reading = \App\Models\ElectricityReading::where('room_id', $bill->lease->room_id)
+            ->where('reading_month', \Carbon\Carbon::parse($bill->billing_period)->startOfMonth()->format('Y-m-d'))
+            ->first();
+        
+        if ($reading) {
+            $reading->delete();
+        }
+        
+        $bill->delete();
+
+        return redirect()->route('admin.electricity.index')->with('success', 'Tagihan dan pencatatan listrik berhasil dihapus.');
+    }
+
     public function uploadTokenProof(\Illuminate\Http\Request $request, \App\Models\Bill $bill)
     {
         $request->validate([
@@ -261,7 +296,7 @@ class AdminController extends Controller
         $rooms = Room::orderBy('room_number')->get();
 
         // Ambil data tenant aktif untuk form Buat Tamu
-        $tenants = User::where('role', 'tenant')->whereHas('leases', function($q) {
+        $tenants = \App\Models\User::where('role', 'tenant')->whereHas('leases', function($q) {
             $q->where('is_active', true);
         })->get();
 
@@ -325,7 +360,7 @@ class AdminController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'body' => 'required|string',
-            'priority' => 'required|in:low,normal,high',
+            'priority' => 'required|in:normal,important,urgent',
         ]);
 
         $validated['user_id'] = auth()->id();
@@ -346,7 +381,7 @@ class AdminController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'body' => 'required|string',
-            'priority' => 'required|in:low,normal,high',
+            'priority' => 'required|in:normal,important,urgent',
             'is_active' => 'boolean',
         ]);
 
@@ -374,13 +409,27 @@ class AdminController extends Controller
         return redirect()->route('admin.tickets.index')->with('success', 'Status tiket berhasil diperbarui.');
     }
 
-    public function wifiIndex()
+    public function wifiIndex(\Illuminate\Http\Request $request)
     {
         $wifiNetworks = \App\Models\WifiNetwork::latest()->get();
         $tenants = \App\Models\User::where('role', 'tenant')->whereHas('leases', function($q) {
             $q->where('is_active', true);
         })->get();
-        return view('admin.wifi.index', compact('wifiNetworks', 'tenants'));
+        
+        $billsQuery = \App\Models\Bill::with('lease.user', 'lease.room')->where('type', 'internet')->latest();
+        
+        if ($request->filled('status')) {
+            $billsQuery->where('status', $request->status);
+        }
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $billsQuery->whereHas('lease.user', function($q) use ($search) {
+                $q->where('name', 'like', '%' . $search . '%');
+            });
+        }
+        $internetBills = $billsQuery->get();
+
+        return view('admin.wifi.index', compact('wifiNetworks', 'tenants', 'internetBills'));
     }
 
     public function wifiStore(\Illuminate\Http\Request $request)

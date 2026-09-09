@@ -116,13 +116,9 @@ class OwnerController extends Controller
         $user->save();
 
         // Send OTP
-        try {
-            \Illuminate\Support\Facades\Mail::raw("Kode OTP untuk memverifikasi akun Anda adalah: {$otp}", function($msg) use ($user) {
-                $msg->to($user->email)->subject('Kode OTP Verifikasi Akun Baru Jessa Kost');
-            });
-        } catch (\Exception $e) {
-            // Log or ignore if mail fails locally
-        }
+        \Illuminate\Support\Facades\Mail::raw("Kode OTP untuk memverifikasi akun Anda adalah: {$otp}", function($msg) use ($user) {
+            $msg->to($user->email)->subject('Kode OTP Verifikasi Akun Baru Jessa Kost');
+        });
 
         // Simpan id user ke session
         $request->session()->put('verify_new_user_id', $user->id);
@@ -163,7 +159,7 @@ class OwnerController extends Controller
             if ($request->session()->has('verify_new_user_room_id')) {
                 $roomId = $request->session()->get('verify_new_user_room_id');
                 $room = \App\Models\Room::find($roomId);
-                
+
                 if ($room && $room->status === 'available') {
                     // Buat lease (penyewaan)
                     \App\Models\Lease::create([
@@ -173,11 +169,11 @@ class OwnerController extends Controller
                         'end_date' => now()->addMonth(),
                         'is_active' => true,
                     ]);
-                    
+
                     // Update status kamar jadi occupied
                     $room->update(['status' => 'occupied']);
                 }
-                
+
                 $request->session()->forget('verify_new_user_room_id');
             }
 

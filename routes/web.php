@@ -49,6 +49,9 @@ Route::middleware(['auth', 'role:admin,owner'])->prefix('admin')->name('admin.')
     Route::get('/electricity/create', [\App\Http\Controllers\AdminController::class, 'electricityCreate'])->name('electricity.create');
     Route::post('/electricity', [\App\Http\Controllers\AdminController::class, 'storeElectricity'])->name('electricity.store');
     Route::get('/electricity/{bill}', [\App\Http\Controllers\AdminController::class, 'electricityShow'])->name('electricity.show');
+    Route::get('/electricity/{bill}/edit', [\App\Http\Controllers\AdminController::class, 'electricityEdit'])->name('electricity.edit');
+    Route::put('/electricity/{bill}', [\App\Http\Controllers\AdminController::class, 'electricityUpdate'])->name('electricity.update');
+    Route::delete('/electricity/{bill}', [\App\Http\Controllers\AdminController::class, 'electricityDestroy'])->name('electricity.destroy');
     Route::post('/electricity/{bill}/token', [\App\Http\Controllers\AdminController::class, 'uploadTokenProof'])->name('electricity.upload_token');
 
     Route::get('/tickets', [\App\Http\Controllers\AdminController::class, 'tickets'])->name('tickets.index');

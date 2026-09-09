@@ -65,10 +65,20 @@
                             </div>
                         </div>
 
-                        <div class="relative z-10">
-                            <a href="{{ route('admin.electricity.show', $bill->id) }}" class="w-full inline-flex justify-center items-center gap-2 bg-gray-50 hover:bg-gray-100 text-gray-700 px-4 py-2 rounded-xl text-sm font-bold transition-colors border border-gray-200">
-                                <i class="fas fa-eye"></i> Detail & Token
+                        <div class="relative z-10 flex gap-2">
+                            <a href="{{ route('admin.electricity.show', $bill->id) }}" class="flex-1 inline-flex justify-center items-center gap-2 bg-gray-50 hover:bg-gray-100 text-gray-700 px-4 py-2 rounded-xl text-sm font-bold transition-colors border border-gray-200" title="Detail & Token">
+                                <i class="fas fa-eye"></i> Detail
                             </a>
+                            <a href="{{ route('admin.electricity.edit', $bill->id) }}" class="inline-flex justify-center items-center bg-blue-50 hover:bg-blue-100 text-blue-600 px-4 py-2 rounded-xl text-sm font-bold transition-colors border border-blue-200" title="Edit">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <form action="{{ route('admin.electricity.destroy', $bill->id) }}" method="POST" class="inline-block" onsubmit="return confirm('Hapus tagihan dan pencatatan listrik ini?');">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="inline-flex justify-center items-center bg-red-50 hover:bg-red-100 text-red-600 px-4 py-2 rounded-xl text-sm font-bold transition-colors border border-red-200" title="Hapus">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </form>
                         </div>
                     </div>
                     @empty
