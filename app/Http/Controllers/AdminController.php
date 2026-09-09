@@ -140,21 +140,32 @@ class AdminController extends Controller
 
         $bill->update($validated);
 
+        if ($bill->type === 'internet') {
+            return redirect()->route('admin.wifi.index')->with('success', 'Tagihan WiFi berhasil diperbarui.');
+        }
+
         return redirect()->route('admin.electricity.index')->with('success', 'Tagihan listrik berhasil diperbarui.');
     }
 
     public function electricityDestroy(\App\Models\Bill $bill)
     {
         // Temukan juga reading yang terkait jika ingin menghapus
-        $reading = \App\Models\ElectricityReading::where('room_id', $bill->lease->room_id)
-            ->where('reading_month', \Carbon\Carbon::parse($bill->billing_period)->startOfMonth()->format('Y-m-d'))
-            ->first();
-        
-        if ($reading) {
-            $reading->delete();
+        if ($bill->type === 'electricity') {
+            $reading = \App\Models\ElectricityReading::where('room_id', $bill->lease->room_id)
+                ->where('reading_month', \Carbon\Carbon::parse($bill->billing_period)->startOfMonth()->format('Y-m-d'))
+                ->first();
+            
+            if ($reading) {
+                $reading->delete();
+            }
         }
         
+        $type = $bill->type;
         $bill->delete();
+
+        if ($type === 'internet') {
+            return redirect()->route('admin.wifi.index')->with('success', 'Tagihan WiFi berhasil dihapus.');
+        }
 
         return redirect()->route('admin.electricity.index')->with('success', 'Tagihan dan pencatatan listrik berhasil dihapus.');
     }
@@ -415,9 +426,9 @@ class AdminController extends Controller
         $tenants = \App\Models\User::where('role', 'tenant')->whereHas('leases', function($q) {
             $q->where('is_active', true);
         })->get();
-        
+
         $billsQuery = \App\Models\Bill::with('lease.user', 'lease.room')->where('type', 'internet')->latest();
-        
+
         if ($request->filled('status')) {
             $billsQuery->where('status', $request->status);
         }

@@ -127,11 +127,25 @@
                                 <p class="text-xs text-gray-400 font-bold uppercase tracking-wider mb-0.5">Total Tagihan</p>
                                 <p class="font-black text-jessa-maroon text-lg">Rp {{ number_format($bill->amount, 0, ',', '.') }}</p>
                             </div>
-                            @if($bill->status == 'unpaid')
-                            <span class="px-3 py-1 bg-red-50 text-red-600 rounded-lg text-xs font-bold border border-red-100">
-                                <i class="fas fa-clock mr-1"></i> Belum Bayar
-                            </span>
-                            @endif
+                            <div class="text-right">
+                                @if($bill->status == 'unpaid')
+                                <span class="px-3 py-1 bg-red-50 text-red-600 rounded-lg text-xs font-bold border border-red-100 inline-block mb-2">
+                                    <i class="fas fa-clock mr-1"></i> Belum Bayar
+                                </span>
+                                @endif
+                                <div class="flex gap-2 justify-end">
+                                    <a href="{{ route('admin.electricity.edit', $bill->id) }}" class="inline-flex justify-center items-center bg-blue-50 hover:bg-blue-100 text-blue-600 w-8 h-8 rounded-lg text-xs font-bold transition-colors border border-blue-200" title="Edit Tagihan">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <form action="{{ route('admin.electricity.destroy', $bill->id) }}" method="POST" class="inline-block" onsubmit="return confirm('Hapus tagihan WiFi ini?');">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="inline-flex justify-center items-center bg-red-50 hover:bg-red-100 text-red-600 w-8 h-8 rounded-lg text-xs font-bold transition-colors border border-red-200" title="Hapus">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     @empty

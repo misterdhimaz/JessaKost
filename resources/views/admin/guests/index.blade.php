@@ -12,9 +12,7 @@
                     <p class="text-sm text-gray-500 font-medium mt-1">Pantau kunjungan dan identitas tamu kost.</p>
                 </div>
             </div>
-            <button @click="createModalOpen = true" class="inline-flex items-center justify-center gap-2 bg-jessa-maroon text-white font-bold px-6 py-3 rounded-xl hover:bg-jessa-maroonDark transition-all shadow-sm hover:shadow-md">
-                <i class="fas fa-user-plus"></i> Catat Tamu Baru
-            </button>
+
         </div>
     </x-slot>
 

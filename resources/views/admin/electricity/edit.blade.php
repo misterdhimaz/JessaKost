@@ -5,7 +5,7 @@
                 <i class="fas fa-arrow-left"></i>
             </a>
             <div>
-                <h2 class="font-extrabold text-xl text-gray-900 leading-tight">Edit Tagihan Listrik</h2>
+                <h2 class="font-extrabold text-xl text-gray-900 leading-tight">Edit Tagihan {{ $bill->type === 'internet' ? 'WiFi' : 'Listrik' }}</h2>
                 <p class="text-sm text-gray-400 font-medium">Ubah data tagihan untuk Kamar {{ $bill->lease->room->room_number ?? '?' }}</p>
             </div>
         </div>
@@ -41,7 +41,7 @@
                     </div>
 
                     <div class="pt-6 flex items-center justify-end gap-3 border-t border-gray-100">
-                        <a href="{{ route('admin.electricity.index') }}" class="text-gray-500 bg-gray-100 hover:bg-gray-200 font-bold rounded-xl text-sm px-6 py-3 transition-colors">Batal</a>
+                        <a href="{{ $bill->type === 'internet' ? route('admin.wifi.index') : route('admin.electricity.index') }}" class="text-gray-500 bg-gray-100 hover:bg-gray-200 font-bold rounded-xl text-sm px-6 py-3 transition-colors">Batal</a>
                         <button type="submit" class="text-white bg-jessa-maroon hover:bg-jessa-maroonDark font-bold rounded-xl text-sm px-6 py-3 transition-all shadow-sm">Simpan Perubahan</button>
                     </div>
                 </form>
@@ -49,3 +49,4 @@
         </div>
     </div>
 </x-app-layout>
+
