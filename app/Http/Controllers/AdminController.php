@@ -94,9 +94,9 @@ class AdminController extends Controller
         // Simpan pencatatan
         \App\Models\ElectricityReading::create([
             'room_id' => $room->id,
-            'reading_month' => \Carbon\Carbon::parse($request->reading_date)->format('Y-m'),
+            'reading_month' => \Carbon\Carbon::parse($request->reading_date)->startOfMonth()->format('Y-m-d'),
             'kwh_used' => $request->kwh_value,
-            'image_path' => $request->hasFile('file-upload') ? $request->file('file-upload')->store('electricity', 'public') : null,
+            'image_proof' => $request->hasFile('file-upload') ? $request->file('file-upload')->store('electricity', 'public') : null,
         ]);
 
         // Buat tagihan baru untuk tenant
