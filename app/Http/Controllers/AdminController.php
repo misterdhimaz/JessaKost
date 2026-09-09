@@ -58,7 +58,7 @@ class AdminController extends Controller
     public function electricityCreate()
     {
         $rooms = Room::with(['leases' => function($query) {
-            $query->where('status', 'active')->with('user');
+            $query->where('is_active', true)->with('user');
         }])->where('status', 'occupied')->get();
 
         return view('admin.electricity.create', compact('rooms'));
@@ -74,7 +74,7 @@ class AdminController extends Controller
         ]);
 
         $room = Room::with(['leases' => function($q) {
-            $q->where('status', 'active');
+            $q->where('is_active', true);
         }])->findOrFail($request->room_id);
 
         $activeLease = $room->leases->first();
