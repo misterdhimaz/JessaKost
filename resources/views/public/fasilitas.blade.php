@@ -1,15 +1,19 @@
 @extends('layouts.public', ['title' => 'Fasilitas Terlengkap'])
 
 @section('content')
-    <section class="py-20 relative">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center max-w-3xl mx-auto mb-20" data-aos="fade-up">
-                <span class="text-jessa-maroon font-extrabold tracking-widest uppercase text-sm mb-2 block">Nilai Tambah Kami</span>
-                <h2 class="text-4xl md:text-5xl font-extrabold text-gray-900 mt-3 mb-6 tracking-tighter">Fasilitas <span class="text-jessa-maroon">Pendukung</span></h2>
-                <div class="w-24 h-1.5 bg-jessa-maroon mx-auto rounded-full mb-6"></div>
-                <p class="text-gray-600 mt-4 text-lg font-medium leading-relaxed">Ekosistem lengkap yang menjamin kenyamanan aktivitas keseharian Anda, di dalam maupun di luar kamar.</p>
-            </div>
+    <!-- Page Hero -->
+    <section class="relative pt-32 pb-20 lg:pt-40 lg:pb-28 bg-jessa-cream overflow-hidden rounded-b-[2rem] sm:rounded-b-[3rem] border-b border-jessa-maroon/10 mb-10">
+        <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1555854877-bab0e564b8d5?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80')] bg-cover bg-center opacity-10 pointer-events-none"></div>
+        <div class="absolute inset-0 bg-gradient-to-t from-jessa-cream via-jessa-cream/80 to-transparent pointer-events-none"></div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+            <span class="inline-block py-1 px-3 rounded-full bg-jessa-maroon/10 text-jessa-maroon font-bold text-xs uppercase tracking-widest mb-4 border border-jessa-maroon/20" data-aos="fade-up">Eksplorasi Jessa Kost</span>
+            <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold text-gray-900 mb-6 tracking-tight" data-aos="fade-up" data-aos-delay="100">Fasilitas <span class="text-jessa-maroon">Terlengkap</span></h1>
+            <p class="text-gray-700 text-lg md:text-xl font-medium max-w-2xl mx-auto leading-relaxed" data-aos="fade-up" data-aos-delay="200">Ekosistem lengkap yang menjamin kenyamanan aktivitas keseharian Anda, di dalam maupun di luar kamar.</p>
+        </div>
+    </section>
 
+    <section class="py-10 pb-20 relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
 
                 <!-- Facility 1 -->
@@ -67,6 +71,15 @@
                     </div>
                     <h3 class="text-xl font-bold text-gray-900 mb-3">Perawatan Rutin</h3>
                     <p class="text-gray-600 text-base leading-relaxed font-medium">Layanan kebersihan area publik dan perawatan fasilitas terjadwal oleh tim khusus kami. Anda fokus kuliah, kami urus sisanya.</p>
+                </div>
+
+                <!-- Facility 7 -->
+                <div class="modern-card p-8 group" data-aos="fade-up" data-aos-delay="700">
+                    <div class="w-16 h-16 bg-white shadow-sm border border-gray-100 rounded-2xl flex items-center justify-center text-2xl text-cyan-500 mb-6 group-hover:bg-cyan-500 group-hover:text-white transition-all duration-300">
+                        <i class="fas fa-faucet-drip"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Air Bersih & Sampah Gratis</h3>
+                    <p class="text-gray-600 text-base leading-relaxed font-medium">Fasilitas air bersih mengalir 24 jam penuh tanpa hambatan, serta pengelolaan dan pembuangan sampah rutin setiap hari secara cuma-cuma.</p>
                 </div>
 
             </div>

@@ -83,6 +83,7 @@ Route::middleware(['auth', 'role:owner'])->prefix('owner')->name('owner.')->grou
     Route::delete('/users/{user}', [\App\Http\Controllers\OwnerController::class, 'destroyUser'])->name('users.destroy');
 
     Route::get('/expenses', [\App\Http\Controllers\OwnerController::class, 'expenses'])->name('expenses.index');
+    Route::post('/expenses', [\App\Http\Controllers\OwnerController::class, 'storeExpense'])->name('expenses.store');
     Route::get('/payments', [\App\Http\Controllers\OwnerController::class, 'payments'])->name('payments.index');
 });
 

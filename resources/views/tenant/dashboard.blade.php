@@ -72,7 +72,7 @@
                         <span class="inline-flex items-center gap-1.5 bg-red-50 text-red-600 border border-red-100 px-3 py-1 rounded-full text-xs font-bold">
                             <span class="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse"></span> Belum Lunas
                         </span>
-                        <a href="{{ route('tenant.bills.index') }}" class="bg-jessa-maroon text-white font-bold px-4 py-2 rounded-xl hover:bg-jessa-maroonDark transition-colors text-sm shadow-sm">
+                        <a href="{{ route('tenant.bills.pay', $bill->id) }}" class="bg-jessa-maroon text-white font-bold px-4 py-2 rounded-xl hover:bg-jessa-maroonDark transition-colors text-sm shadow-sm">
                             Bayar
                         </a>
                     </div>

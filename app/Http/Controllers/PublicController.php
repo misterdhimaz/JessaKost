@@ -24,9 +24,15 @@ class PublicController extends Controller
         return view('public.fasilitas');
     }
 
-    public function kamar()
+    public function kamar(Request $request)
     {
-        $rooms = Room::all();
+        $query = Room::query();
+
+        if ($request->filled('status') && $request->status !== 'all') {
+            $query->where('status', $request->status);
+        }
+
+        $rooms = $query->get();
         return view('public.kamar', compact('rooms'));
     }
 

@@ -1,114 +1,169 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <div class="flex items-center gap-3">
-                <a href="{{ route('owner.dashboard') }}" class="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center text-gray-500 hover:bg-gray-200 transition-colors">
-                    <i class="fas fa-arrow-left"></i>
-                </a>
-                <div class="w-10 h-10 bg-jessa-maroon/10 rounded-xl flex items-center justify-center text-jessa-maroon">
-                    <i class="fas fa-file-invoice-dollar text-lg"></i>
-                </div>
-                <div>
-                    <h2 class="font-extrabold text-2xl text-gray-900 leading-tight">Laporan Keuangan</h2>
-                    <p class="text-sm text-gray-500 font-medium mt-1">Rekapitulasi pembayaran lunas (Sewa & Listrik)</p>
-                </div>
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-jessa-maroon/10 rounded-xl flex items-center justify-center text-jessa-maroon">
+                <i class="fas fa-file-invoice-dollar"></i>
+            </div>
+            <div>
+                <h2 class="font-extrabold text-xl text-gray-900 leading-tight">Laporan Keuangan</h2>
+                <p class="text-sm text-gray-400 font-medium">Rekapitulasi pendapatan dan pengeluaran kost</p>
             </div>
         </div>
     </x-slot>
 
     <div class="space-y-6">
-        
-        {{-- Filter & Total Card --}}
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div class="lg:col-span-1 bg-gradient-to-br from-jessa-maroon to-jessa-maroonDark rounded-3xl p-6 shadow-md text-white relative overflow-hidden">
-                <div class="absolute -right-10 -bottom-10 opacity-10 text-9xl">
-                    <i class="fas fa-wallet"></i>
+        <!-- Filter Bar -->
+        <div class="bg-white rounded-[2rem] shadow-sm border border-gray-100 p-6">
+            <form method="GET" action="{{ route('owner.reports.index') }}" class="flex flex-col md:flex-row items-end gap-4">
+                <div class="w-full md:w-auto">
+                    <x-input-label for="month" value="Bulan" />
+                    <select name="month" id="month" class="mt-1 block w-full md:w-48 border-gray-300 focus:border-jessa-maroon focus:ring-jessa-maroon rounded-xl shadow-sm">
+                        @foreach(range(1, 12) as $m)
+                            <option value="{{ sprintf('%02d', $m) }}" {{ $month == sprintf('%02d', $m) ? 'selected' : '' }}>
+                                {{ date('F', mktime(0, 0, 0, $m, 10)) }}
+                            </option>
+                        @endforeach
+                    </select>
                 </div>
-                <p class="text-white/70 font-bold text-xs uppercase tracking-widest mb-1 relative z-10">Total Pendapatan (Berdasarkan Filter)</p>
-                <h3 class="font-black text-4xl mb-4 relative z-10">Rp {{ number_format($totalIncome, 0, ',', '.') }}</h3>
-                <p class="text-white/80 text-sm font-medium relative z-10"><i class="fas fa-check-circle text-green-400 mr-1"></i> Dari {{ $paidBills->count() }} transaksi lunas</p>
+                <div class="w-full md:w-auto">
+                    <x-input-label for="year" value="Tahun" />
+                    <select name="year" id="year" class="mt-1 block w-full md:w-48 border-gray-300 focus:border-jessa-maroon focus:ring-jessa-maroon rounded-xl shadow-sm">
+                        @foreach(range(date('Y')-2, date('Y')+1) as $y)
+                            <option value="{{ $y }}" {{ $year == $y ? 'selected' : '' }}>{{ $y }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="w-full md:w-auto flex gap-2">
+                    <button type="submit" class="w-full md:w-auto px-6 py-2.5 bg-jessa-maroon text-white font-bold rounded-xl shadow-sm hover:bg-jessa-maroonDark transition-colors">Terapkan Filter</button>
+                    <a href="{{ route('owner.reports.index') }}" class="px-6 py-2.5 bg-gray-100 text-gray-700 font-bold rounded-xl hover:bg-gray-200 transition-colors">Reset</a>
+                </div>
+            </form>
+        </div>
+
+        <!-- Summary Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="bg-white rounded-[2rem] p-6 shadow-sm border border-gray-100 relative overflow-hidden group">
+                <div class="absolute -right-6 -top-6 w-24 h-24 bg-green-50 rounded-full group-hover:scale-110 transition-transform"></div>
+                <div class="relative z-10 flex items-center gap-4">
+                    <div class="w-14 h-14 bg-green-100 text-green-600 rounded-2xl flex items-center justify-center text-2xl">
+                        <i class="fas fa-arrow-up"></i>
+                    </div>
+                    <div>
+                        <p class="text-[10px] text-gray-500 font-bold uppercase tracking-wider mb-0.5">Pendapatan Sewa</p>
+                        <p class="text-xl font-black text-gray-900">Rp{{ number_format($totalRentIncome, 0, ',', '.') }}</p>
+                    </div>
+                </div>
             </div>
 
-            <div class="lg:col-span-2 bg-white rounded-3xl p-6 shadow-sm border border-gray-100 flex flex-col justify-center">
-                <form action="{{ route('owner.reports.index') }}" method="GET" class="flex flex-col md:flex-row items-end gap-4 w-full">
-                    <div class="w-full">
-                        <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Bulan Pembayaran</label>
-                        <select name="month" class="w-full bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-jessa-maroon focus:border-jessa-maroon p-3 font-medium">
-                            <option value="">-- Semua Bulan --</option>
-                            @foreach(range(1, 12) as $m)
-                                <option value="{{ $m }}" {{ request('month') == $m ? 'selected' : '' }}>{{ \Carbon\Carbon::create()->month($m)->translatedFormat('F') }}</option>
-                            @endforeach
-                        </select>
+            <div class="bg-white rounded-[2rem] p-6 shadow-sm border border-gray-100 relative overflow-hidden group">
+                <div class="absolute -right-6 -top-6 w-24 h-24 bg-blue-50 rounded-full group-hover:scale-110 transition-transform"></div>
+                <div class="relative z-10 flex items-center gap-4">
+                    <div class="w-14 h-14 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center text-2xl">
+                        <i class="fas fa-bolt"></i>
                     </div>
-                    <div class="w-full">
-                        <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Tahun Pembayaran</label>
-                        <select name="year" class="w-full bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-jessa-maroon focus:border-jessa-maroon p-3 font-medium">
-                            <option value="">-- Semua Tahun --</option>
-                            @foreach(range(date('Y') - 2, date('Y')) as $y)
-                                <option value="{{ $y }}" {{ request('year') == $y ? 'selected' : '' }}>{{ $y }}</option>
-                            @endforeach
-                        </select>
+                    <div>
+                        <p class="text-[10px] text-gray-500 font-bold uppercase tracking-wider mb-0.5">Pendapatan Listrik</p>
+                        <p class="text-xl font-black text-gray-900">Rp{{ number_format($totalElectricityIncome, 0, ',', '.') }}</p>
                     </div>
-                    <button type="submit" class="w-full md:w-auto px-6 py-3 bg-gray-900 text-white font-bold rounded-xl hover:bg-black transition-colors whitespace-nowrap">
-                        <i class="fas fa-filter mr-2"></i> Filter Data
-                    </button>
-                    @if(request('month') || request('year'))
-                        <a href="{{ route('owner.reports.index') }}" class="w-full md:w-auto px-6 py-3 bg-red-50 text-red-600 font-bold rounded-xl hover:bg-red-100 transition-colors text-center whitespace-nowrap">
-                            Reset
-                        </a>
-                    @endif
-                </form>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-[2rem] p-6 shadow-sm border border-gray-100 relative overflow-hidden group">
+                <div class="absolute -right-6 -top-6 w-24 h-24 bg-red-50 rounded-full group-hover:scale-110 transition-transform"></div>
+                <div class="relative z-10 flex items-center gap-4">
+                    <div class="w-14 h-14 bg-red-100 text-red-600 rounded-2xl flex items-center justify-center text-2xl">
+                        <i class="fas fa-arrow-down"></i>
+                    </div>
+                    <div>
+                        <p class="text-[10px] text-gray-500 font-bold uppercase tracking-wider mb-0.5">Total Pengeluaran</p>
+                        <p class="text-xl font-black text-gray-900">Rp{{ number_format($totalExpense, 0, ',', '.') }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-jessa-maroon rounded-[2rem] p-6 shadow-md relative overflow-hidden group">
+                <div class="absolute -right-6 -top-6 w-24 h-24 bg-white/10 rounded-full group-hover:scale-110 transition-transform"></div>
+                <div class="relative z-10 flex items-center gap-4">
+                    <div class="w-14 h-14 bg-white/20 text-white backdrop-blur-sm rounded-2xl flex items-center justify-center text-2xl">
+                        <i class="fas fa-wallet"></i>
+                    </div>
+                    <div>
+                        <p class="text-[10px] text-white/70 font-bold uppercase tracking-wider mb-0.5">Laba Bersih</p>
+                        <p class="text-xl font-black text-white">Rp{{ number_format($netProfit, 0, ',', '.') }}</p>
+                    </div>
+                </div>
             </div>
         </div>
 
-        {{-- Detailed Table --}}
-        <div class="bg-white rounded-[2rem] shadow-sm border border-gray-100 overflow-hidden">
-            <div class="p-6 border-b border-gray-50 bg-gray-50/50 flex items-center justify-between">
-                <h3 class="font-extrabold text-gray-900">Rincian Transaksi Masuk</h3>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Table Pemasukan -->
+            <div class="bg-white rounded-[2rem] shadow-sm border border-gray-100 overflow-hidden">
+                <div class="p-6 border-b border-gray-100 bg-gray-50/50 flex justify-between items-center">
+                    <h3 class="font-extrabold text-gray-900 text-lg">Rincian Pendapatan</h3>
+                    <span class="text-sm font-bold text-green-600">Rp{{ number_format($totalIncome, 0, ',', '.') }}</span>
+                </div>
+                <div class="overflow-x-auto p-4">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="text-xs text-gray-400 font-bold uppercase tracking-wider border-b border-gray-100">
+                                <th class="p-3">Tanggal</th>
+                                <th class="p-3">Jenis</th>
+                                <th class="p-3 text-right">Nominal</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-sm font-medium">
+                            @forelse($paidBills as $bill)
+                            <tr class="border-b border-gray-50 hover:bg-gray-50/50">
+                                <td class="p-3 text-gray-500 whitespace-nowrap">{{ \Carbon\Carbon::parse($bill->paid_at)->format('d M Y') }}</td>
+                                <td class="p-3">
+                                    <p class="font-bold text-gray-900">{{ ucfirst($bill->type) }} - Kamar {{ $bill->lease->room->room_number }}</p>
+                                </td>
+                                <td class="p-3 text-right font-bold text-gray-900">Rp{{ number_format($bill->amount, 0, ',', '.') }}</td>
+                            </tr>
+                            @empty
+                            <tr>
+                                <td colspan="3" class="p-6 text-center text-gray-500">Tidak ada pendapatan di periode ini.</td>
+                            </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
             </div>
-            
-            <div class="overflow-x-auto">
-                <table class="w-full text-left">
-                    <thead>
-                        <tr class="text-xs text-gray-400 font-bold uppercase tracking-wider border-b border-gray-50 bg-white">
-                            <th class="p-5">Tanggal Bayar</th>
-                            <th class="p-5">Penyewa / Kamar</th>
-                            <th class="p-5">Jenis Tagihan</th>
-                            <th class="p-5">Periode</th>
-                            <th class="p-5 text-right">Nominal</th>
-                        </tr>
-                    </thead>
-                    <tbody class="text-sm font-medium divide-y divide-gray-50">
-                        @forelse($paidBills as $bill)
-                        <tr class="hover:bg-gray-50/50 transition-colors">
-                            <td class="p-5 text-gray-500">{{ \Carbon\Carbon::parse($bill->paid_at)->translatedFormat('d M Y, H:i') }}</td>
-                            <td class="p-5">
-                                <p class="font-bold text-gray-900">{{ $bill->lease->user->name ?? '-' }}</p>
-                                <p class="text-xs text-gray-400">Kamar {{ $bill->lease->room->room_number ?? '-' }}</p>
-                            </td>
-                            <td class="p-5">
-                                <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-{{ $bill->type_color }}/10 text-{{ $bill->type_color }} rounded-full text-xs font-bold border border-{{ $bill->type_color }}/20">
-                                    <i class="fas {{ $bill->type_icon }}"></i> {{ $bill->type_label }}
-                                </span>
-                            </td>
-                            <td class="p-5 text-gray-500">{{ $bill->billing_period ?? \Carbon\Carbon::parse($bill->due_date)->translatedFormat('F Y') }}</td>
-                            <td class="p-5 text-right font-black text-gray-900">Rp {{ number_format($bill->amount, 0, ',', '.') }}</td>
-                        </tr>
-                        @empty
-                        <tr>
-                            <td colspan="5" class="p-16 text-center text-gray-400 font-medium">
-                                <div class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center text-gray-300 mx-auto mb-4 text-2xl">
-                                    <i class="fas fa-receipt"></i>
-                                </div>
-                                <p class="text-lg font-bold text-gray-900 mb-1">Tidak ada data transaksi.</p>
-                                <p class="text-sm">Belum ada pembayaran yang lunas pada periode ini.</p>
-                            </td>
-                        </tr>
-                        @endforelse
-                    </tbody>
-                </table>
+
+            <!-- Table Pengeluaran -->
+            <div class="bg-white rounded-[2rem] shadow-sm border border-gray-100 overflow-hidden">
+                <div class="p-6 border-b border-gray-100 bg-gray-50/50 flex justify-between items-center">
+                    <h3 class="font-extrabold text-gray-900 text-lg">Rincian Pengeluaran</h3>
+                    <span class="text-sm font-bold text-red-600">Rp{{ number_format($totalExpense, 0, ',', '.') }}</span>
+                </div>
+                <div class="overflow-x-auto p-4">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="text-xs text-gray-400 font-bold uppercase tracking-wider border-b border-gray-100">
+                                <th class="p-3">Tanggal</th>
+                                <th class="p-3">Kategori & Judul</th>
+                                <th class="p-3 text-right">Nominal</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-sm font-medium">
+                            @forelse($expenses as $expense)
+                            <tr class="border-b border-gray-50 hover:bg-gray-50/50">
+                                <td class="p-3 text-gray-500 whitespace-nowrap">{{ \Carbon\Carbon::parse($expense->expense_date)->format('d M Y') }}</td>
+                                <td class="p-3">
+                                    <p class="font-bold text-gray-900">{{ $expense->title }}</p>
+                                    <span class="text-[10px] text-gray-500 uppercase">{{ $expense->category }}</span>
+                                </td>
+                                <td class="p-3 text-right font-bold text-gray-900">Rp{{ number_format($expense->amount, 0, ',', '.') }}</td>
+                            </tr>
+                            @empty
+                            <tr>
+                                <td colspan="3" class="p-6 text-center text-gray-500">Tidak ada pengeluaran di periode ini.</td>
+                            </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
-
     </div>
 </x-app-layout>

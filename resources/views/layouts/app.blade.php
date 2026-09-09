@@ -117,6 +117,11 @@
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        @media (max-width: 640px) {
+            .hide-scrollbar-mobile::-webkit-scrollbar { display: none; }
+            .hide-scrollbar-mobile { -ms-overflow-style: none; scrollbar-width: none; }
+        }
     </style>
 </head>
 <body class="text-gray-800 antialiased selection:bg-jessa-maroon selection:text-white" x-data="{ sidebarOpen: false, loaded: false }" x-init="setTimeout(() => loaded = true, 100)">
@@ -198,23 +203,20 @@
                 </a>
 
                 <div class="px-3 mt-8 mb-3 text-[10px] font-black text-gray-400 uppercase tracking-widest flex items-center gap-2">
-                    <span class="w-2 h-2 rounded-full bg-indigo-400"></span> Bantuan
+                    <span class="w-2 h-2 rounded-full bg-indigo-400"></span> Bantuan & Layanan
                 </div>
                 <a href="{{ route('tenant.announcements.index') }}" class="sidebar-link {{ request()->routeIs('tenant.announcements.*') ? 'active' : '' }}">
                     <span class="icon-box"><i class="fas fa-bullhorn"></i></span> Pengumuman
                 </a>
                 <a href="{{ route('tenant.tickets.index') }}" class="sidebar-link {{ request()->routeIs('tenant.tickets.*') ? 'active' : '' }}">
-                    <span class="icon-box"><i class="fas fa-clipboard-list"></i></span> Riwayat Laporan
-                </a>
-                <a href="{{ route('tenant.tickets.create') }}" class="sidebar-link {{ request()->routeIs('tenant.tickets.create') ? 'active' : '' }}">
-                    <span class="icon-box"><i class="fas fa-plus-circle"></i></span> Lapor Kerusakan
+                    <span class="icon-box"><i class="fas fa-clipboard-list"></i></span> Manajemen Laporan
                 </a>
                 @endif
 
                 {{-- Admin & Owner Shared Links --}}
                 @if(in_array(Auth::user()->role, ['admin', 'owner']))
                 <div class="px-3 mt-8 mb-3 text-[10px] font-black text-gray-400 uppercase tracking-widest flex items-center gap-2">
-                    <span class="w-2 h-2 rounded-full bg-blue-400"></span> Operasional
+                    <span class="w-2 h-2 rounded-full bg-blue-400"></span> Operasional Kost
                 </div>
                 <a href="{{ route('admin.rooms.index') }}" class="sidebar-link {{ request()->routeIs('admin.rooms.*') ? 'active' : '' }}">
                     <span class="icon-box"><i class="fas fa-door-open"></i></span> Kelola Kamar
@@ -222,25 +224,52 @@
                 <a href="{{ route('admin.guests.index') }}" class="sidebar-link {{ request()->routeIs('admin.guests.*') ? 'active' : '' }}">
                     <span class="icon-box"><i class="fas fa-user-friends"></i></span> Log Tamu
                 </a>
+
+                <div class="px-3 mt-8 mb-3 text-[10px] font-black text-gray-400 uppercase tracking-widest flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-yellow-400"></span> Utilitas & Laporan
+                </div>
                 <a href="{{ route('admin.electricity.index') }}" class="sidebar-link {{ request()->routeIs('admin.electricity.*') ? 'active' : '' }}">
                     <span class="icon-box"><i class="fas fa-bolt"></i></span> Manajemen Listrik
                 </a>
+                <a href="{{ route('admin.wifi.index') }}" class="sidebar-link {{ request()->routeIs('admin.wifi.*') ? 'active' : '' }}">
+                    <span class="icon-box"><i class="fas fa-wifi"></i></span> Manajemen WiFi
+                </a>
                 <a href="{{ route('admin.tickets.index') }}" class="sidebar-link {{ request()->routeIs('admin.tickets.*') ? 'active' : '' }}">
-                    <span class="icon-box"><i class="fas fa-tools"></i></span> Laporan Kerusakan
+                    <span class="icon-box"><i class="fas fa-headset"></i></span> Keluhan & Laporan
                 </a>
                 <a href="{{ route('admin.announcements.index') }}" class="sidebar-link {{ request()->routeIs('admin.announcements.*') ? 'active' : '' }}">
                     <span class="icon-box"><i class="fas fa-bullhorn"></i></span> Kelola Pengumuman
                 </a>
                 @endif
 
+                {{-- Admin Specific Links --}}
+                @if(Auth::user()->role === 'admin')
+                <div class="px-3 mt-8 mb-3 text-[10px] font-black text-gray-400 uppercase tracking-widest flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-red-400"></span> Keuangan Admin
+                </div>
+                <a href="{{ route('admin.expenses.index') }}" class="sidebar-link {{ request()->routeIs('admin.expenses.*') ? 'active' : '' }}">
+                    <span class="icon-box"><i class="fas fa-wallet"></i></span> Catat Pengeluaran
+                </a>
+                @endif
+
                 {{-- Owner Specific Links --}}
                 @if(Auth::user()->role === 'owner')
                 <div class="px-3 mt-8 mb-3 text-[10px] font-black text-gray-400 uppercase tracking-widest flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-green-500"></span> Keuangan (Owner)
+                </div>
+                <a href="{{ route('owner.payments.index') }}" class="sidebar-link {{ request()->routeIs('owner.payments.*') ? 'active' : '' }}">
+                    <span class="icon-box"><i class="fas fa-hand-holding-usd"></i></span> Pembayaran Sewa
+                </a>
+                <a href="{{ route('owner.expenses.index') }}" class="sidebar-link {{ request()->routeIs('owner.expenses.*') ? 'active' : '' }}">
+                    <span class="icon-box"><i class="fas fa-wallet"></i></span> Laporan Pengeluaran
+                </a>
+                <a href="{{ route('owner.reports.index') }}" class="sidebar-link {{ request()->routeIs('owner.reports.*') ? 'active' : '' }}">
+                    <span class="icon-box"><i class="fas fa-file-invoice-dollar"></i></span> Laba Bersih & Rekap
+                </a>
+
+                <div class="px-3 mt-8 mb-3 text-[10px] font-black text-gray-400 uppercase tracking-widest flex items-center gap-2">
                     <span class="w-2 h-2 rounded-full bg-jessa-maroon"></span> Eksekutif (Owner)
                 </div>
-                <a href="{{ route('owner.reports.index') }}" class="sidebar-link {{ request()->routeIs('owner.reports.*') ? 'active' : '' }}">
-                    <span class="icon-box"><i class="fas fa-file-invoice-dollar"></i></span> Laporan Keuangan
-                </a>
                 <a href="{{ route('owner.users.index') }}" class="sidebar-link {{ request()->routeIs('owner.users.*') ? 'active' : '' }}">
                     <span class="icon-box"><i class="fas fa-users-cog"></i></span> Manajemen Pengguna
                 </a>
@@ -250,7 +279,7 @@
 
             <!-- User Footer Widget -->
             <div class="p-4 shrink-0">
-                <div class="p-3 rounded-2xl bg-white/50 border border-white/60 shadow-[0_4px_12px_rgba(0,0,0,0.02)] flex items-center gap-3 hover:bg-white/80 transition-colors cursor-pointer group">
+                <div class="p-3 rounded-2xl bg-white/50 border border-white/60 shadow-[0_4px_12px_rgba(0,0,0,0.02)] flex items-center gap-3 hover:bg-white/80 transition-colors group">
                     <div class="w-10 h-10 bg-gradient-to-br from-jessa-cream to-orange-100 rounded-xl overflow-hidden flex items-center justify-center text-jessa-maroon font-bold shadow-inner group-hover:scale-105 transition-transform shrink-0">
                         @if(Auth::user()->profile_photo_path)
                             <img src="{{ asset('storage/' . Auth::user()->profile_photo_path) }}" alt="Profile" class="w-full h-full object-cover">
@@ -262,31 +291,39 @@
                         <p class="font-bold text-gray-900 text-sm truncate">{{ Auth::user()->name }}</p>
                         <p class="text-[11px] text-gray-500 font-bold uppercase tracking-wider truncate">{{ Auth::user()->role }}</p>
                     </div>
-                    <a href="{{ Auth::user()->role === 'tenant' ? route('tenant.profile.edit') : route('profile.edit') }}" class="w-8 h-8 rounded-lg bg-gray-100/80 text-gray-400 hover:text-jessa-maroon hover:bg-jessa-maroon/10 flex items-center justify-center transition-colors">
-                        <i class="fas fa-cog"></i>
-                    </a>
+                    <div class="flex items-center gap-1 shrink-0">
+                        <a href="{{ Auth::user()->role === 'tenant' ? route('tenant.profile.edit') : route('profile.edit') }}" class="w-8 h-8 rounded-lg bg-gray-100/80 text-gray-400 hover:text-jessa-maroon hover:bg-jessa-maroon/10 flex items-center justify-center transition-colors" title="Pengaturan Profil">
+                            <i class="fas fa-cog text-sm"></i>
+                        </a>
+                        <form method="POST" action="{{ route('logout') }}" class="m-0 p-0">
+                            @csrf
+                            <button type="submit" class="w-8 h-8 rounded-lg bg-red-50 text-red-500 hover:bg-red-500 hover:text-white flex items-center justify-center transition-colors shadow-sm" title="Keluar">
+                                <i class="fas fa-sign-out-alt text-sm"></i>
+                            </button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </aside>
 
         <!-- Main Content Area -->
-        <div class="flex-1 lg:ml-[296px] flex flex-col min-h-screen relative z-10 transition-all duration-500">
+        <div class="flex-1 lg:ml-[296px] flex flex-col min-h-screen relative z-10 transition-all duration-500 overflow-x-hidden w-full">
 
             <!-- Top Header -->
-            <header class="h-20 glass-panel shadow-sm border-b border-gray-200/50 flex items-center justify-between px-4 sm:px-8 sticky top-0 lg:top-4 lg:mr-4 lg:rounded-3xl z-30 transition-all duration-300">
-                <div class="flex items-center gap-4">
-                    <button @click="sidebarOpen = true" class="lg:hidden w-10 h-10 rounded-xl bg-white shadow-sm border border-gray-100 flex items-center justify-center text-gray-600 hover:bg-gray-50 hover:text-jessa-maroon transition-colors active:scale-95">
+            <header class="h-auto min-h-[5rem] py-3 glass-panel shadow-sm border-b border-gray-200/50 flex items-center justify-between px-4 sm:px-8 sticky top-0 lg:top-4 lg:mr-4 lg:rounded-3xl z-30 transition-all duration-300 gap-3">
+                <div class="flex items-center gap-3 min-w-0 flex-1">
+                    <button @click="sidebarOpen = true" class="lg:hidden shrink-0 w-10 h-10 rounded-xl bg-white shadow-sm border border-gray-100 flex items-center justify-center text-gray-600 hover:bg-gray-50 hover:text-jessa-maroon transition-colors active:scale-95">
                         <i class="fas fa-bars"></i>
                     </button>
 
-                    <div x-show="loaded" x-transition:enter="transition-all ease-out duration-700 delay-100" x-transition:enter-start="opacity-0 translate-x-4" x-transition:enter-end="opacity-100 translate-x-0" style="display: none;">
+                    <div x-show="loaded" x-transition:enter="transition-all ease-out duration-700 delay-100" x-transition:enter-start="opacity-0 translate-x-4" x-transition:enter-end="opacity-100 translate-x-0" style="display: none;" class="min-w-0 overflow-x-auto custom-scrollbar flex-1 pb-1 sm:pb-0 hide-scrollbar-mobile">
                         @isset($header)
                             {{ $header }}
                         @endisset
                     </div>
                 </div>
 
-                <div class="flex items-center gap-3 sm:gap-4">
+                <div class="flex items-center gap-3 shrink-0">
                     <!-- Notifications -->
                     <button class="w-10 h-10 rounded-xl bg-white shadow-sm border border-gray-100 flex items-center justify-center text-gray-500 hover:text-jessa-maroon hover:bg-jessa-maroon/5 transition-all hover:scale-105 active:scale-95 relative group">
                         <i class="fas fa-bell group-hover:animate-swing"></i>

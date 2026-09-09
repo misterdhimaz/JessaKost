@@ -234,7 +234,7 @@ class AdminController extends Controller
     public function guests(\Illuminate\Http\Request $request)
     {
         $query = GuestLog::with(['tenant.leases' => function ($q) {
-            $q->where('status', 'active')->with('room');
+            $q->where('is_active', true)->with('room');
         }])->latest('visit_date');
 
         if ($request->filled('search')) {
@@ -253,7 +253,7 @@ class AdminController extends Controller
         if ($request->filled('room_id')) {
             $roomId = $request->room_id;
             $query->whereHas('tenant.leases', function($q) use ($roomId) {
-                $q->where('room_id', $roomId)->where('status', 'active');
+                $q->where('room_id', $roomId)->where('is_active', true);
             });
         }
 
@@ -263,9 +263,19 @@ class AdminController extends Controller
         return view('admin.guests.index', compact('guests', 'rooms'));
     }
 
-    public function tickets()
+    public function tickets(\Illuminate\Http\Request $request)
     {
-        $tickets = Ticket::latest()->get();
+        $query = Ticket::latest();
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        if ($request->filled('category')) {
+            $query->where('category', $request->category);
+        }
+
+        $tickets = $query->get();
 
         return view('admin.tickets.index', compact('tickets'));
     }

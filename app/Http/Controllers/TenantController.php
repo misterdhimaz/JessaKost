@@ -40,6 +40,7 @@ class TenantController extends Controller
     {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
+            'category' => 'required|in:kerusakan,keluhan,layanan,lainnya',
             'description' => 'required|string',
             'image' => 'nullable|image|max:2048',
         ]);
@@ -57,7 +58,7 @@ class TenantController extends Controller
 
         \App\Models\Ticket::create(\Illuminate\Support\Arr::except($validated, ['image']));
 
-        return redirect()->route('tenant.tickets.index')->with('success', 'Keluhan berhasil dikirim.');
+        return redirect()->route('tenant.tickets.index')->with('success', 'Laporan berhasil dikirim.');
     }
 
     public function bills(Request $request)

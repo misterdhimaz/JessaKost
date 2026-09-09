@@ -58,11 +58,29 @@
 
                                 @if($latestRentBill)
                                     @if($latestRentBill->status == 'paid')
-                                        <p class="font-bold text-green-600"><i class="fas fa-check-circle mr-1"></i> Lunas</p>
-                                        <p class="text-xs text-gray-500 mt-1">Via Mayar/Sistem ({{ $latestRentBill->billing_period }})</p>
+                                        <span class="inline-flex items-center gap-1.5 bg-green-50 text-green-700 px-3 py-1.5 rounded-full text-xs font-bold border border-green-100">
+                                            <i class="fas fa-check-circle"></i> Sudah Bayar
+                                        </span>
+                                        <p class="text-[10px] text-gray-500 mt-2 font-bold uppercase">Periode: {{ $latestRentBill->billing_period }}</p>
+                                        <p class="text-xs text-gray-600 font-medium">Dibayar: {{ \Carbon\Carbon::parse($latestRentBill->paid_at)->format('d M Y') }}</p>
                                     @else
-                                        <p class="font-bold text-red-600"><i class="fas fa-times-circle mr-1"></i> Belum Dibayar</p>
-                                        <p class="text-xs text-gray-500 mt-1">Periode: {{ $latestRentBill->billing_period }}</p>
+                                        @php
+                                            $isLate = $latestRentBill->due_date && \Carbon\Carbon::parse($latestRentBill->due_date)->isPast();
+                                            $daysLate = $isLate ? \Carbon\Carbon::parse($latestRentBill->due_date)->diffInDays(now()) : 0;
+                                        @endphp
+
+                                        <span class="inline-flex items-center gap-1.5 {{ $isLate ? 'bg-red-50 text-red-700 border-red-100' : 'bg-yellow-50 text-yellow-700 border-yellow-100' }} px-3 py-1.5 rounded-full text-xs font-bold border">
+                                            <i class="fas {{ $isLate ? 'fa-exclamation-triangle' : 'fa-clock' }}"></i> Belum Bayar
+                                        </span>
+                                        <p class="text-[10px] text-gray-500 mt-2 font-bold uppercase">Periode: {{ $latestRentBill->billing_period }}</p>
+                                        @if($latestRentBill->due_date)
+                                            <p class="text-xs {{ $isLate ? 'text-red-500 font-bold' : 'text-gray-500 font-medium' }}">
+                                                Jatuh Tempo: {{ \Carbon\Carbon::parse($latestRentBill->due_date)->format('d M Y') }}
+                                                @if($isLate)
+                                                    <span class="block mt-0.5">(Telat {{ $daysLate }} hari)</span>
+                                                @endif
+                                            </p>
+                                        @endif
                                     @endif
                                 @else
                                     <p class="text-gray-400 italic text-xs">Belum ada tagihan sewa tercatat.</p>

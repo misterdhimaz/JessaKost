@@ -2,12 +2,13 @@
 
 @section('content')
     <!-- Hero Section: Premium White & Cream Balanced -->
-    <section class="min-h-[90vh] flex items-center relative mt-0 mx-0 sm:mx-4 md:mx-6 rounded-b-[2.5rem] sm:rounded-b-[3.5rem] md:rounded-b-[4rem] overflow-hidden bg-white border-t-4 border-jessa-maroon shadow-[0_20px_60px_rgba(146,0,58,0.08)] border-b border-jessa-cream/50">
-
-        <!-- Dekorasi Orbs & Blobs (Modern Soft Gradients) -->
-        <div class="absolute inset-0 w-full h-full overflow-hidden pointer-events-none z-0 bg-gradient-to-b from-gray-50/50 to-white">
-            <div class="absolute -top-24 -right-24 w-[30rem] h-[30rem] bg-gradient-to-br from-jessa-cream/80 to-jessa-maroon/10 rounded-full filter blur-[80px] opacity-70 animate-pulse-slow"></div>
-            <div class="absolute bottom-10 left-10 w-[20rem] h-[20rem] bg-gradient-to-tr from-jessa-maroon/10 to-transparent rounded-full filter blur-[60px] animate-float"></div>
+    <section class="relative min-h-[90vh] flex items-center overflow-hidden bg-white selection:bg-jessa-maroon selection:text-white pt-10">
+        <!-- Optimized Background Design for Mobile -->
+        <div class="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+            <!-- Orbs: simplified on mobile, animated on desktop -->
+            <div class="absolute top-[-20%] left-[-10%] w-[300px] md:w-[700px] h-[300px] md:h-[700px] bg-jessa-cream/40 rounded-full opacity-70"></div>
+            <div class="absolute top-[-10%] right-[-10%] w-[300px] md:w-[600px] h-[300px] md:h-[600px] bg-jessa-maroon/5 rounded-full opacity-50"></div>
+            <div class="absolute bottom-[-20%] left-[20%] w-[300px] md:w-[800px] h-[300px] md:h-[800px] bg-red-100/30 rounded-full opacity-60 hidden md:block"></div>
 
             <!-- Dekorasi Pattern Dots Premium -->
             <svg class="absolute top-24 left-10 text-jessa-maroon/10 animate-float" style="animation-duration: 8s;" width="120" height="120" fill="none" viewBox="0 0 100 100">
@@ -68,14 +69,14 @@
                 <!-- Foto Kost & Floating Cards (Kanan) -->
                 <div class="lg:col-span-6 relative mt-12 lg:mt-0" data-aos="fade-left" data-aos-duration="1200" data-aos-delay="200">
                     <!-- Lingkaran Hiasan Belakang Foto -->
-                    <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[100%] h-[100%] bg-gradient-to-tr from-jessa-cream/80 to-white rounded-full z-0 animate-pulse-slow blur-2xl"></div>
+                    <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[100%] h-[100%] bg-gradient-to-tr from-jessa-cream/80 to-white rounded-full z-0 animate-pulse-slow blur-lg md:blur-2xl"></div>
 
                     <div class="relative z-10 flex justify-end items-center h-full sm:min-h-[550px]">
 
                         <!-- Main Image: Foto Kost Anda -->
-                        <div class="w-full max-w-[420px] h-[480px] md:h-[580px] rounded-[2.5rem] shadow-[0_30px_60px_rgba(146,0,58,0.15)] overflow-hidden border-[8px] border-white relative group transform hover:-translate-y-2 transition-transform duration-500">
+                        <div class="w-full max-w-[420px] h-[480px] md:h-[580px] rounded-[2.5rem] shadow-[0_15px_40px_rgba(146,0,58,0.1)] md:shadow-[0_30px_60px_rgba(146,0,58,0.15)] overflow-hidden border-[6px] md:border-[8px] border-white relative group transform hover:-translate-y-1 transition-transform duration-500">
                             <div class="absolute inset-0 bg-jessa-maroon/10 group-hover:bg-transparent transition-colors duration-500 z-10"></div>
-                            <img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Bangunan Jessa Kost" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700 z-0">
+                            <img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Bangunan Jessa Kost" class="w-full h-full object-cover transform md:group-hover:scale-105 transition-transform duration-700 z-0">
 
                             <!-- Overlay Hiasan -->
                             <div class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-gray-900/90 via-gray-900/40 to-transparent p-6 pt-24 z-20">
@@ -86,18 +87,18 @@
                         </div>
 
                         <!-- Floating Image 2: Interior -->
-                        <div class="absolute -left-2 md:-left-12 bottom-12 w-[220px] md:w-[260px] h-[220px] md:h-[260px] rounded-[2rem] shadow-[0_20px_40px_rgba(0,0,0,0.15)] overflow-hidden border-[6px] border-white z-20 animate-float bg-white" style="animation-delay: 1s;">
+                        <div class="absolute -left-2 md:-left-12 bottom-12 w-[180px] md:w-[260px] h-[180px] md:h-[260px] rounded-[1.5rem] md:rounded-[2rem] shadow-[0_10px_30px_rgba(0,0,0,0.1)] overflow-hidden border-[4px] md:border-[6px] border-white z-20 animate-float bg-white" style="animation-delay: 1s;">
                             <img src="https://images.unsplash.com/photo-1555854877-bab0e564b8d5?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" alt="Interior Kamar" class="w-full h-full object-cover">
                         </div>
 
                         <!-- Floating Card: Aman -->
-                        <div class="absolute top-16 -left-8 md:-left-16 bg-white/90 backdrop-blur-xl px-5 py-4 rounded-2xl shadow-[0_15px_35px_rgba(0,0,0,0.1)] z-30 flex items-center gap-4 border border-white animate-float" style="animation-delay: 2s;">
-                            <div class="w-12 h-12 bg-gradient-to-br from-green-50 to-green-100 text-green-500 rounded-2xl flex items-center justify-center border border-green-200/50 shadow-inner">
-                                <i class="fas fa-shield-check text-lg"></i>
+                        <div class="absolute top-16 -left-4 md:-left-16 bg-white/95 md:bg-white/90 md:backdrop-blur-md px-4 md:px-5 py-3 md:py-4 rounded-2xl shadow-[0_10px_25px_rgba(0,0,0,0.1)] z-30 flex items-center gap-3 md:gap-4 border border-white animate-float" style="animation-delay: 2s;">
+                            <div class="w-10 md:w-12 h-10 md:h-12 bg-gradient-to-br from-green-50 to-green-100 text-green-500 rounded-xl md:rounded-2xl flex items-center justify-center border border-green-200/50 shadow-inner">
+                                <i class="fas fa-shield-check text-base md:text-lg"></i>
                             </div>
                             <div>
-                                <h4 class="font-bold text-gray-900 text-sm tracking-tight">Keamanan 24/7</h4>
-                                <span class="text-xs text-gray-500 font-medium flex items-center gap-1">
+                                <h4 class="font-bold text-gray-900 text-xs md:text-sm tracking-tight">Keamanan 24/7</h4>
+                                <span class="text-[10px] md:text-xs text-gray-500 font-medium flex items-center gap-1">
                                     <span class="w-1.5 h-1.5 rounded-full bg-green-500"></span> CCTV Terpantau
                                 </span>
                             </div>
@@ -127,7 +128,7 @@
                 <p class="text-gray-500 text-base md:text-lg font-medium mt-4 leading-relaxed">Dari urusan perut, koneksi internet, hingga keamanan kendaraan. Jessa Kost menyediakan ekosistem terpadu terlengkap.</p>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
                 <!-- Card 1 -->
                 <div class="bg-white rounded-[2rem] border border-gray-100 p-8 group hover:bg-gradient-to-br hover:from-white hover:to-red-50/30 transition-all duration-300 hover:-translate-y-2 shadow-[0_8px_30px_rgba(0,0,0,0.03)] hover:shadow-[0_20px_40px_rgba(146,0,58,0.08)] relative overflow-hidden" data-aos="fade-up" data-aos-delay="100">
                     <div class="absolute -right-10 -top-10 w-32 h-32 bg-jessa-cream/30 rounded-full group-hover:scale-[2] transition-transform duration-700 ease-out z-0"></div>
@@ -135,8 +136,8 @@
                         <div class="w-16 h-16 bg-red-50 border border-red-100 shadow-sm rounded-2xl flex items-center justify-center text-2xl mb-6 text-jessa-maroon group-hover:bg-jessa-maroon group-hover:text-white group-hover:border-jessa-maroon group-hover:rotate-12 transition-all duration-300">
                             <i class="fas fa-store"></i>
                         </div>
-                        <h3 class="text-xl font-extrabold text-gray-900 mb-3 group-hover:text-jessa-maroon transition-colors">Warung & Rumah Makan</h3>
-                        <p class="text-gray-500 leading-relaxed font-medium mb-5 text-sm">Akses kuliner rumahan dan kebutuhan harian tanpa perlu keluar pagar.</p>
+                        <h3 class="text-xl font-extrabold text-gray-900 mb-3 group-hover:text-jessa-maroon transition-colors">Warung Makan</h3>
+                        <p class="text-gray-500 leading-relaxed font-medium mb-5 text-sm">Akses kuliner dan kebutuhan harian mudah.</p>
                         <div class="inline-flex items-center gap-2 bg-gray-50 px-3.5 py-2 rounded-xl border border-gray-100 shadow-sm">
                             <i class="fas fa-gift text-jessa-maroon"></i>
                             <span class="text-gray-700 font-bold text-xs">Es Teh Gratis Tiap Jumat</span>
@@ -151,8 +152,8 @@
                         <div class="w-16 h-16 bg-blue-50 border border-blue-100 shadow-sm rounded-2xl flex items-center justify-center text-2xl mb-6 text-blue-600 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600 group-hover:rotate-12 transition-all duration-300">
                             <i class="fas fa-wifi"></i>
                         </div>
-                        <h3 class="text-xl font-extrabold text-gray-900 mb-3 group-hover:text-blue-600 transition-colors">Koneksi Tanpa Batas</h3>
-                        <p class="text-gray-500 leading-relaxed font-medium text-sm">Internet dedicated yang andal. Lancar untuk kelas online, download jurnal, atau sekadar hiburan tanpa buffering.</p>
+                        <h3 class="text-xl font-extrabold text-gray-900 mb-3 group-hover:text-blue-600 transition-colors">Koneksi Internet</h3>
+                        <p class="text-gray-500 leading-relaxed font-medium text-sm">Internet dedicated yang andal. Lancar untuk kelas online, atau sekadar hiburan tanpa buffering.</p>
                     </div>
                 </div>
 
@@ -163,8 +164,20 @@
                         <div class="w-16 h-16 bg-green-50 border border-green-100 shadow-sm rounded-2xl flex items-center justify-center text-2xl mb-6 text-green-600 group-hover:bg-green-600 group-hover:text-white group-hover:border-green-600 group-hover:rotate-12 transition-all duration-300">
                             <i class="fas fa-motorcycle"></i>
                         </div>
-                        <h3 class="text-xl font-extrabold text-gray-900 mb-3 group-hover:text-green-600 transition-colors">Parkir Motor Ideal</h3>
-                        <p class="text-gray-500 leading-relaxed font-medium text-sm">Area parkir kanopi lega yang dirancang agar Anda bisa mengeluarkan motor tanpa harus repot menggeser puluhan motor lainnya.</p>
+                        <h3 class="text-xl font-extrabold text-gray-900 mb-3 group-hover:text-green-600 transition-colors">Parkir Lega</h3>
+                        <p class="text-gray-500 leading-relaxed font-medium text-sm">Area parkir kanopi lega dirancang agar Anda bisa mengeluarkan motor tanpa harus repot.</p>
+                    </div>
+                </div>
+
+                <!-- Card 4: Air & Sampah -->
+                <div class="bg-white rounded-[2rem] border border-gray-100 p-8 group hover:bg-gradient-to-br hover:from-white hover:to-cyan-50/30 transition-all duration-300 hover:-translate-y-2 shadow-[0_8px_30px_rgba(0,0,0,0.03)] hover:shadow-[0_20px_40px_rgba(6,182,212,0.08)] relative overflow-hidden" data-aos="fade-up" data-aos-delay="400">
+                    <div class="absolute -right-10 -top-10 w-32 h-32 bg-cyan-50/60 rounded-full group-hover:scale-[2] transition-transform duration-700 ease-out z-0"></div>
+                    <div class="relative z-10">
+                        <div class="w-16 h-16 bg-cyan-50 border border-cyan-100 shadow-sm rounded-2xl flex items-center justify-center text-2xl mb-6 text-cyan-500 group-hover:bg-cyan-500 group-hover:text-white group-hover:border-cyan-500 group-hover:rotate-12 transition-all duration-300">
+                            <i class="fas fa-faucet-drip"></i>
+                        </div>
+                        <h3 class="text-xl font-extrabold text-gray-900 mb-3 group-hover:text-cyan-600 transition-colors">Air & Sampah Gratis</h3>
+                        <p class="text-gray-500 leading-relaxed font-medium text-sm">Sudah termasuk fasilitas air bersih 24 jam dan pengelolaan sampah rutin setiap harinya.</p>
                     </div>
                 </div>
             </div>

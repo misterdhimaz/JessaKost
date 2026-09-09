@@ -1,15 +1,20 @@
 @extends('layouts.public', ['title' => 'Profil Kami'])
 
 @section('content')
-    <!-- Profil Section -->
-    <section class="py-20 relative bg-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16" data-aos="fade-up">
-                <h4 class="text-jessa-maroon font-bold tracking-wider uppercase text-sm mb-2">Tentang Kami</h4>
-                <h2 class="text-3xl md:text-4xl font-extrabold text-jessa-dark mb-4">Profil Jessa Kost</h2>
-                <div class="w-24 h-1 bg-jessa-maroon mx-auto"></div>
-            </div>
+    <!-- Page Hero -->
+    <section class="relative pt-32 pb-20 lg:pt-40 lg:pb-28 bg-jessa-cream overflow-hidden rounded-b-[2rem] sm:rounded-b-[3rem] border-b border-jessa-maroon/10 mb-10">
+        <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1513694203232-719a280e022f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80')] bg-cover bg-center opacity-10 pointer-events-none"></div>
+        <div class="absolute inset-0 bg-gradient-to-t from-jessa-cream via-jessa-cream/80 to-transparent pointer-events-none"></div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+            <span class="inline-block py-1 px-3 rounded-full bg-jessa-maroon/10 text-jessa-maroon font-bold text-xs uppercase tracking-widest mb-4 border border-jessa-maroon/20" data-aos="fade-up">Tentang Kami</span>
+            <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold text-gray-900 mb-6 tracking-tight" data-aos="fade-up" data-aos-delay="100">Profil <span class="text-jessa-maroon">Jessa Kost</span></h1>
+            <p class="text-gray-700 text-lg md:text-xl font-medium max-w-2xl mx-auto leading-relaxed" data-aos="fade-up" data-aos-delay="200">Menyediakan hunian sementara yang mendukung gaya hidup produktif mahasiswa dengan perpaduan kenyamanan modern dan lokasi strategis.</p>
+        </div>
+    </section>
 
+    <!-- Profil Section -->
+    <section class="py-10 pb-20 relative bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-center mb-20">
                 <div class="order-2 md:order-1 relative" data-aos="fade-right">
                     <div class="absolute inset-0 bg-jessa-maroon/10 transform -rotate-3 rounded-2xl"></div>

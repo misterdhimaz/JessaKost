@@ -27,7 +27,20 @@
                         <span class="w-12 h-0.5 bg-jessa-maroon"></span>
                     </div>
                     <h2 class="text-4xl md:text-5xl font-extrabold text-jessa-dark mb-4 tracking-tight">Ketersediaan <span class="text-jessa-maroon">Real-time</span></h2>
-                    <p class="text-gray-600 text-lg font-medium max-w-2xl mx-auto">Lihat dan pilih kamar idamanmu. Dilengkapi dengan galeri foto mendetail. Status ketersediaan diperbarui otomatis langsung dari sistem kami.</p>
+                    <p class="text-gray-600 text-lg font-medium max-w-2xl mx-auto mb-8">Lihat dan pilih kamar idamanmu. Dilengkapi dengan galeri foto mendetail. Status ketersediaan diperbarui otomatis langsung dari sistem kami.</p>
+
+                    <!-- Filter Section -->
+                    <form action="{{ route('kamar') }}" method="GET" class="w-full max-w-md mx-auto flex gap-2">
+                        <select name="status" class="flex-1 bg-white border border-gray-200 text-gray-700 rounded-full px-5 py-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-jessa-maroon/20 focus:border-jessa-maroon transition-all font-medium appearance-none bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23111827%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E')] bg-[length:12px_12px] bg-no-repeat bg-[position:right_1.2rem_center]">
+                            <option value="all" {{ request('status') == 'all' ? 'selected' : '' }}>Tampilkan Semua Kamar</option>
+                            <option value="available" {{ request('status') == 'available' ? 'selected' : '' }}>Tersedia</option>
+                            <option value="occupied" {{ request('status') == 'occupied' ? 'selected' : '' }}>Terisi</option>
+                            <option value="maintenance" {{ request('status') == 'maintenance' ? 'selected' : '' }}>Sedang Perbaikan</option>
+                        </select>
+                        <button type="submit" class="bg-jessa-maroon text-white px-6 py-3 rounded-full font-bold hover:bg-jessa-maroonDark transition-colors shadow-md hover:shadow-lg flex items-center justify-center gap-2 shrink-0">
+                            <i class="fas fa-filter text-sm"></i> Filter
+                        </button>
+                    </form>
                 </div>
 
                 @if(isset($rooms) && $rooms->count() > 0)

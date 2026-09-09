@@ -215,11 +215,11 @@
             <div class="md:col-span-3">
                 <h4 class="font-bold text-gray-900 mb-6 text-sm tracking-widest uppercase">Hubungi Kami</h4>
                 <ul class="space-y-4">
-                    <li class="flex items-start gap-3 text-gray-600 font-semibold text-sm">
-                        <div class="w-8 h-8 rounded-full bg-jessa-maroon/10 flex items-center justify-center text-jessa-maroon shrink-0">
+                    <li class="flex items-start gap-3 text-gray-600 font-semibold text-sm group">
+                        <div class="w-8 h-8 rounded-full bg-jessa-maroon/10 flex items-center justify-center text-jessa-maroon shrink-0 group-hover:bg-jessa-maroon group-hover:text-white transition-colors">
                             <i class="fas fa-map-marker-alt text-xs"></i>
                         </div>
-                        <span class="mt-1">Jl. Mawar Merah No. 45<br>Indralaya, Ogan Ilir</span>
+                        <a href="https://www.google.com/maps/@-3.2081346,104.6500056,12a,75y,178.42h,81.93t/data=!3m7!1e1!3m5!1sb58qy8PqhieZsumwKmN2SA!2e0!6shttps:%2F%2Fstreetviewpixels-pa.googleapis.com%2Fv1%2Fthumbnail%3Fcb_client%3Dmaps_sv.tactile%26w%3D900%26h%3D600%26pitch%3D8.068447809181833%26panoid%3Db58qy8PqhieZsumwKmN2SA%26yaw%3D178.42180272807605!7i16384!8i8192?entry=ttu&g_ep=EgoyMDI2MDkwNi4wIKXMDSoASAFQAw%3D%3D" target="_blank" class="mt-1 group-hover:text-jessa-maroon transition-colors">Jl. Mawar Merah No. 45<br>Indralaya, Ogan Ilir</a>
                     </li>
                     <li class="flex items-center gap-3 text-gray-600 font-semibold text-sm">
                         <div class="w-8 h-8 rounded-full bg-jessa-maroon/10 flex items-center justify-center text-jessa-maroon shrink-0">

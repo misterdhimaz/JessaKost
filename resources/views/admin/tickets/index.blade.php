@@ -12,6 +12,30 @@
 
     <div class="space-y-0" x-data="{ showModal: false, ticketId: null, ticketStatus: '', ticketCost: '' }">
         <div class="max-w-full">
+            <!-- Filter Bar -->
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 mb-6 flex flex-wrap gap-4 items-center justify-between">
+                <div class="flex items-center gap-4 w-full md:w-auto">
+                    <form action="{{ route('admin.tickets.index') }}" method="GET" class="flex flex-wrap gap-3 w-full md:w-auto" id="filterForm">
+                        <select name="status" class="border-gray-200 rounded-xl text-sm focus:ring-jessa-maroon focus:border-jessa-maroon" onchange="document.getElementById('filterForm').submit()">
+                            <option value="">Semua Status</option>
+                            <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Pending (Baru)</option>
+                            <option value="in_progress" {{ request('status') == 'in_progress' ? 'selected' : '' }}>Diproses</option>
+                            <option value="resolved" {{ request('status') == 'resolved' ? 'selected' : '' }}>Selesai</option>
+                        </select>
+                        <select name="category" class="border-gray-200 rounded-xl text-sm focus:ring-jessa-maroon focus:border-jessa-maroon" onchange="document.getElementById('filterForm').submit()">
+                            <option value="">Semua Kategori</option>
+                            <option value="kerusakan" {{ request('category') == 'kerusakan' ? 'selected' : '' }}>Kerusakan</option>
+                            <option value="keluhan" {{ request('category') == 'keluhan' ? 'selected' : '' }}>Keluhan</option>
+                            <option value="layanan" {{ request('category') == 'layanan' ? 'selected' : '' }}>Layanan</option>
+                            <option value="lainnya" {{ request('category') == 'lainnya' ? 'selected' : '' }}>Lainnya</option>
+                        </select>
+                        @if(request('status') || request('category'))
+                            <a href="{{ route('admin.tickets.index') }}" class="px-4 py-2 bg-gray-100 text-gray-600 rounded-xl text-sm font-bold hover:bg-gray-200">Reset</a>
+                        @endif
+                    </form>
+                </div>
+            </div>
+
             <div class="bg-white rounded-[2rem] shadow-sm border border-gray-100 overflow-hidden">
                 <div class="p-6 border-b border-gray-100 flex flex-col md:flex-row md:items-center justify-between gap-4 bg-gray-50/50">
                     <div>
@@ -43,6 +67,7 @@
                                 </td>
                                 <td class="p-4 max-w-xs">
                                     <p class="font-bold text-gray-900 truncate">{{ $ticket->title }}</p>
+                                    <span class="inline-block mt-1 px-2 py-0.5 bg-gray-100 text-gray-600 rounded-md text-[10px] font-bold uppercase">{{ $ticket->category ?? 'Lainnya' }}</span>
                                     <p class="text-xs text-gray-500 mt-1 truncate">{{ $ticket->description }}</p>
                                     @if($ticket->image_path)
                                         <a href="{{ asset('storage/' . $ticket->image_path) }}" target="_blank" class="text-xs text-blue-500 hover:underline mt-1 inline-block"><i class="fas fa-image mr-1"></i>Lihat Foto</a>

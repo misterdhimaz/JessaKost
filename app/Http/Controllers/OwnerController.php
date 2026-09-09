@@ -34,20 +34,34 @@ class OwnerController extends Controller
 
     public function reports(\Illuminate\Http\Request $request)
     {
-        $query = Bill::with('lease.room', 'lease.user')->where('status', 'paid');
+        $queryBills = Bill::with('lease.room', 'lease.user')->where('status', 'paid');
+        $queryExpenses = \App\Models\Expense::query();
 
-        // Simple filtering
+        $month = $request->input('month', date('m'));
+        $year = $request->input('year', date('Y'));
+
         if ($request->filled('month')) {
-            $query->whereMonth('paid_at', $request->month);
+            $queryBills->whereMonth('paid_at', $month);
+            $queryExpenses->whereMonth('expense_date', $month);
         }
         if ($request->filled('year')) {
-            $query->whereYear('paid_at', $request->year);
+            $queryBills->whereYear('paid_at', $year);
+            $queryExpenses->whereYear('expense_date', $year);
         }
 
-        $paidBills = $query->latest('paid_at')->get();
-        $totalIncome = $paidBills->sum('amount');
+        $paidBills = $queryBills->latest('paid_at')->get();
+        $expenses = $queryExpenses->latest('expense_date')->get();
 
-        return view('owner.reports.index', compact('paidBills', 'totalIncome'));
+        $totalRentIncome = $paidBills->where('type', 'rent')->sum('amount');
+        $totalElectricityIncome = $paidBills->where('type', 'electricity')->sum('amount');
+        $totalWifiIncome = $paidBills->where('type', 'wifi')->sum('amount'); // If wifi billing exists
+        $totalIncome = $paidBills->sum('amount');
+        $totalExpense = $expenses->sum('amount');
+        $netProfit = $totalIncome - $totalExpense;
+
+        return view('owner.reports.index', compact(
+            'paidBills', 'expenses', 'totalIncome', 'totalRentIncome', 'totalElectricityIncome', 'totalWifiIncome', 'totalExpense', 'netProfit', 'month', 'year'
+        ));
     }
 
     public function approveTicket(Ticket $ticket)
@@ -139,6 +153,34 @@ class OwnerController extends Controller
     {
         $expenses = \App\Models\Expense::with('user')->latest('expense_date')->get();
         return view('owner.expenses.index', compact('expenses'));
+    }
+
+    public function storeExpense(\Illuminate\Http\Request $request)
+    {
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'amount' => 'required|numeric|min:0',
+            'expense_date' => 'required|date',
+            'category' => 'required|string|max:255',
+            'proof_image' => 'nullable|image|max:5120',
+            'notes' => 'nullable|string',
+        ]);
+
+        $expense = new \App\Models\Expense();
+        $expense->user_id = auth()->id();
+        $expense->title = $validated['title'];
+        $expense->amount = $validated['amount'];
+        $expense->expense_date = $validated['expense_date'];
+        $expense->category = $validated['category'];
+        $expense->notes = $validated['notes'];
+
+        if ($request->hasFile('proof_image')) {
+            $expense->proof_image_path = $request->file('proof_image')->store('expenses', 'public');
+        }
+
+        $expense->save();
+
+        return redirect()->route('owner.expenses.index')->with('success', 'Pengeluaran berhasil dicatat.');
     }
 
     public function payments()
