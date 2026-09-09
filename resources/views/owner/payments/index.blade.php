@@ -13,8 +13,30 @@
 
     <div class="space-y-6">
         <div class="bg-white rounded-[2rem] shadow-sm border border-gray-100 overflow-hidden">
-            <div class="p-6 border-b border-gray-100 bg-gray-50/50">
+            <div class="p-6 border-b border-gray-100 bg-gray-50/50 flex flex-col md:flex-row justify-between items-center gap-4">
                 <h3 class="font-extrabold text-gray-900 text-lg">Daftar Penyewaan Kamar</h3>
+                
+                <form action="{{ route('owner.payments.index') }}" method="GET" class="flex flex-col md:flex-row gap-3 w-full md:w-auto">
+                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari nama / kamar..." class="rounded-xl border-gray-200 text-sm focus:ring-jessa-maroon focus:border-jessa-maroon">
+                    <select name="status" class="rounded-xl border-gray-200 text-sm focus:ring-jessa-maroon focus:border-jessa-maroon">
+                        <option value="">Semua Status Sewa</option>
+                        <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>Aktif</option>
+                        <option value="inactive" {{ request('status') == 'inactive' ? 'selected' : '' }}>Tidak Aktif</option>
+                    </select>
+                    <select name="payment_status" class="rounded-xl border-gray-200 text-sm focus:ring-jessa-maroon focus:border-jessa-maroon">
+                        <option value="">Semua Tagihan</option>
+                        <option value="unpaid" {{ request('payment_status') == 'unpaid' ? 'selected' : '' }}>Belum Lunas</option>
+                        <option value="paid" {{ request('payment_status') == 'paid' ? 'selected' : '' }}>Lunas</option>
+                    </select>
+                    <button type="submit" class="bg-gray-900 text-white px-4 py-2 rounded-xl text-sm font-bold hover:bg-gray-800 transition-colors">
+                        <i class="fas fa-search"></i>
+                    </button>
+                    @if(request()->anyFilled(['search', 'status', 'payment_status']))
+                        <a href="{{ route('owner.payments.index') }}" class="bg-red-50 text-red-500 px-4 py-2 rounded-xl text-sm font-bold hover:bg-red-100 transition-colors flex items-center justify-center">
+                            <i class="fas fa-times"></i>
+                        </a>
+                    @endif
+                </form>
             </div>
 
             <div class="overflow-x-auto p-4">

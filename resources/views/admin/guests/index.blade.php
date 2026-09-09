@@ -12,13 +12,13 @@
                     <p class="text-sm text-gray-500 font-medium mt-1">Pantau kunjungan dan identitas tamu kost.</p>
                 </div>
             </div>
-            <button class="inline-flex items-center justify-center gap-2 bg-jessa-maroon text-white font-bold px-6 py-3 rounded-xl hover:bg-jessa-maroonDark transition-all shadow-sm hover:shadow-md">
+            <button @click="createModalOpen = true" class="inline-flex items-center justify-center gap-2 bg-jessa-maroon text-white font-bold px-6 py-3 rounded-xl hover:bg-jessa-maroonDark transition-all shadow-sm hover:shadow-md">
                 <i class="fas fa-user-plus"></i> Catat Tamu Baru
             </button>
         </div>
     </x-slot>
 
-    <div class="space-y-6" x-data="{ photoModalOpen: false, currentPhoto: '' }">
+    <div class="space-y-6" x-data="{ photoModalOpen: false, currentPhoto: '', createModalOpen: false }">
         
         {{-- Filter Section --}}
         <div class="bg-white rounded-3xl shadow-sm border border-gray-100 p-6">
@@ -161,6 +161,63 @@
                 <p class="mt-8 text-white/90 font-bold text-sm text-center px-6 py-3 bg-white/10 backdrop-blur-xl rounded-full shadow-lg border border-white/10 tracking-wide">
                     <i class="fas fa-id-card text-jessa-cream mr-2"></i> KARTU IDENTITAS TAMU
                 </p>
+            </div>
+        </div>
+
+        {{-- Modal Create Guest --}}
+        <div x-show="createModalOpen" style="display: none;" class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/60 backdrop-blur-sm p-4" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
+            <div class="bg-white rounded-[2rem] w-full max-w-2xl shadow-2xl overflow-hidden" @click.away="createModalOpen = false" x-transition:enter="transition ease-out duration-300 delay-100" x-transition:enter-start="opacity-0 scale-95 translate-y-4" x-transition:enter-end="opacity-100 scale-100 translate-y-0">
+                <div class="px-8 py-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
+                    <h3 class="text-xl font-extrabold text-gray-900"><i class="fas fa-user-plus text-jessa-maroon mr-2"></i> Catat Tamu Baru</h3>
+                    <button @click="createModalOpen = false" class="text-gray-400 hover:text-red-500 transition-colors w-8 h-8 flex items-center justify-center rounded-full hover:bg-red-50">
+                        <i class="fas fa-times text-lg"></i>
+                    </button>
+                </div>
+                <form action="{{ route('admin.guests.store') }}" method="POST" enctype="multipart/form-data" class="p-8">
+                    @csrf
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div class="col-span-1 md:col-span-2">
+                            <label class="block text-sm font-bold text-gray-700 mb-2">Penghuni yang Dikunjungi <span class="text-red-500">*</span></label>
+                            <select name="tenant_id" required class="w-full rounded-xl border-gray-200 bg-gray-50 px-4 py-3 text-gray-700 focus:ring-2 focus:ring-jessa-maroon/20 focus:border-jessa-maroon">
+                                <option value="">-- Pilih Penghuni Aktif --</option>
+                                @foreach($tenants ?? [] as $tenant)
+                                    <option value="{{ $tenant->id }}">{{ $tenant->name }} (Kamar {{ $tenant->leases->first()->room->room_number ?? '?' }})</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-2">Nama Lengkap Tamu <span class="text-red-500">*</span></label>
+                            <input type="text" name="visitor_name" required class="w-full rounded-xl border-gray-200 bg-gray-50 px-4 py-3 text-gray-700 focus:ring-2 focus:ring-jessa-maroon/20 focus:border-jessa-maroon" placeholder="Contoh: Budi Santoso">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-2">Tanggal Kunjungan <span class="text-red-500">*</span></label>
+                            <input type="date" name="visit_date" required value="{{ date('Y-m-d') }}" class="w-full rounded-xl border-gray-200 bg-gray-50 px-4 py-3 text-gray-700 focus:ring-2 focus:ring-jessa-maroon/20 focus:border-jessa-maroon">
+                        </div>
+                        <div class="col-span-1 md:col-span-2">
+                            <label class="block text-sm font-bold text-gray-700 mb-2">Keperluan <span class="text-red-500">*</span></label>
+                            <input type="text" name="purpose" required class="w-full rounded-xl border-gray-200 bg-gray-50 px-4 py-3 text-gray-700 focus:ring-2 focus:ring-jessa-maroon/20 focus:border-jessa-maroon" placeholder="Contoh: Berkunjung keluarga / Belajar kelompok">
+                        </div>
+                        <div class="col-span-1 md:col-span-2">
+                            <label class="block text-sm font-bold text-gray-700 mb-2">Jenis Kunjungan</label>
+                            <div class="flex gap-4">
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="radio" name="is_overnight" value="0" checked class="text-jessa-maroon focus:ring-jessa-maroon"> Singkat (Tidak Menginap)
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="radio" name="is_overnight" value="1" class="text-yellow-500 focus:ring-yellow-500"> Menginap
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-span-1 md:col-span-2">
+                            <label class="block text-sm font-bold text-gray-700 mb-2">Foto KTP Tamu (Opsional)</label>
+                            <input type="file" name="id_card_photo" accept="image/*" class="w-full text-sm text-gray-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-jessa-maroon/5 file:text-jessa-maroon hover:file:bg-jessa-maroon/10">
+                        </div>
+                    </div>
+                    <div class="pt-6 border-t border-gray-100 flex justify-end gap-3">
+                        <button type="button" @click="createModalOpen = false" class="px-6 py-2.5 rounded-xl font-bold text-gray-600 bg-gray-100 hover:bg-gray-200 transition-colors">Batal</button>
+                        <button type="submit" class="px-6 py-2.5 rounded-xl font-bold text-white bg-jessa-maroon hover:bg-jessa-maroonDark transition-colors shadow-sm">Simpan Tamu</button>
+                    </div>
+                </form>
             </div>
         </div>
 

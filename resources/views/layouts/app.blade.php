@@ -307,7 +307,7 @@
         </aside>
 
         <!-- Main Content Area -->
-        <div class="flex-1 lg:ml-[296px] flex flex-col min-h-screen relative z-10 transition-all duration-500 overflow-x-hidden w-full">
+        <div class="flex-1 lg:ml-[312px] flex flex-col min-h-screen relative z-10 transition-all duration-500 overflow-x-hidden w-full lg:w-[calc(100%-312px)]">
 
             <!-- Top Header -->
             <header class="h-auto min-h-[5rem] py-3 glass-panel shadow-sm border-b border-gray-200/50 flex items-center justify-between px-4 sm:px-8 sticky top-0 lg:top-4 lg:mr-4 lg:rounded-3xl z-30 transition-all duration-300 gap-3">

@@ -11,8 +11,11 @@
         </div>
     </x-slot>
 
-    <div class="space-y-6" x-data="{ showModal: false, editMode: false, modalData: { id: null, name: '', ssid: '', password: '' } }">
-        <div class="flex justify-end">
+    <div class="space-y-6" x-data="{ showModal: false, showBillModal: false, editMode: false, modalData: { id: null, name: '', ssid: '', password: '' } }">
+        <div class="flex justify-end gap-3">
+            <button @click="showBillModal = true" class="bg-gray-800 text-white px-5 py-2.5 rounded-xl font-bold shadow-sm hover:bg-gray-900 transition-colors flex items-center gap-2">
+                <i class="fas fa-file-invoice-dollar"></i> Tagih WiFi
+            </button>
             <button @click="showModal = true; editMode = false; modalData = { id: null, name: '', ssid: '', password: '' }" class="bg-jessa-maroon text-white px-5 py-2.5 rounded-xl font-bold shadow-sm hover:bg-jessa-maroonDark transition-colors flex items-center gap-2">
                 <i class="fas fa-plus"></i> Tambah WiFi
             </button>
@@ -108,6 +111,44 @@
                         <div class="mt-6 flex justify-end gap-3 pt-4 border-t border-gray-100">
                             <button type="button" @click="showModal = false" class="px-5 py-2.5 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-xl font-bold transition-colors">Batal</button>
                             <button type="submit" class="px-5 py-2.5 text-white bg-jessa-maroon hover:bg-jessa-maroonDark rounded-xl font-bold shadow-sm transition-colors" x-text="editMode ? 'Simpan Perubahan' : 'Tambah WiFi'"></button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        {{-- Modal Tagih WiFi --}}
+        <div x-show="showBillModal" style="display: none;" class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/60 backdrop-blur-sm p-4" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
+            <div class="bg-white rounded-[2rem] w-full max-w-md shadow-2xl overflow-hidden" @click.away="showBillModal = false" x-transition:enter="transition ease-out duration-300 delay-100" x-transition:enter-start="opacity-0 scale-95 translate-y-4" x-transition:enter-end="opacity-100 scale-100 translate-y-0">
+                <div class="px-6 py-5 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
+                    <h3 class="text-xl font-extrabold text-gray-900"><i class="fas fa-file-invoice-dollar text-jessa-maroon mr-2"></i> Tagih WiFi ke Penghuni</h3>
+                    <button @click="showBillModal = false" class="text-gray-400 hover:text-red-500 transition-colors w-8 h-8 flex items-center justify-center rounded-full hover:bg-red-50">
+                        <i class="fas fa-times text-lg"></i>
+                    </button>
+                </div>
+                <div class="p-6">
+                    <form action="{{ route('admin.wifi.bill') }}" method="POST" class="space-y-4">
+                        @csrf
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-2">Penghuni Aktif <span class="text-red-500">*</span></label>
+                            <select name="tenant_id" required class="w-full rounded-xl border-gray-200 bg-gray-50 px-4 py-3 text-gray-700 focus:ring-2 focus:ring-jessa-maroon/20 focus:border-jessa-maroon">
+                                <option value="">-- Pilih Penghuni --</option>
+                                @foreach($tenants ?? [] as $tenant)
+                                    <option value="{{ $tenant->id }}">{{ $tenant->name }} (Kamar {{ $tenant->leases->first()->room->room_number ?? '?' }})</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-2">Periode Tagihan <span class="text-red-500">*</span></label>
+                            <input type="month" name="billing_period" required value="{{ date('Y-m') }}" class="w-full rounded-xl border-gray-200 bg-gray-50 px-4 py-3 text-gray-700 focus:ring-2 focus:ring-jessa-maroon/20 focus:border-jessa-maroon">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-2">Nominal Tagihan (Rp) <span class="text-red-500">*</span></label>
+                            <input type="number" name="amount" required min="0" class="w-full rounded-xl border-gray-200 bg-gray-50 px-4 py-3 text-gray-700 focus:ring-2 focus:ring-jessa-maroon/20 focus:border-jessa-maroon" placeholder="Contoh: 150000">
+                        </div>
+                        <div class="mt-6 flex justify-end gap-3 pt-4 border-t border-gray-100">
+                            <button type="button" @click="showBillModal = false" class="px-5 py-2.5 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-xl font-bold transition-colors">Batal</button>
+                            <button type="submit" class="px-5 py-2.5 text-white bg-jessa-maroon hover:bg-jessa-maroonDark rounded-xl font-bold shadow-sm transition-colors">Kirim Tagihan</button>
                         </div>
                     </form>
                 </div>

@@ -44,6 +44,7 @@ Route::middleware(['auth', 'role:admin,owner'])->prefix('admin')->name('admin.')
     Route::put('/rooms/{room}', [\App\Http\Controllers\AdminController::class, 'updateRoom'])->name('rooms.update');
     Route::delete('/rooms/{room}', [\App\Http\Controllers\AdminController::class, 'destroyRoom'])->name('rooms.destroy');
     Route::get('/guests', [\App\Http\Controllers\AdminController::class, 'guests'])->name('guests.index');
+    Route::post('/guests', [\App\Http\Controllers\AdminController::class, 'storeGuest'])->name('guests.store');
     Route::get('/electricity', [\App\Http\Controllers\AdminController::class, 'electricityIndex'])->name('electricity.index');
     Route::get('/electricity/create', [\App\Http\Controllers\AdminController::class, 'electricityCreate'])->name('electricity.create');
     Route::post('/electricity', [\App\Http\Controllers\AdminController::class, 'storeElectricity'])->name('electricity.store');
@@ -62,6 +63,7 @@ Route::middleware(['auth', 'role:admin,owner'])->prefix('admin')->name('admin.')
 
     Route::get('/wifi', [\App\Http\Controllers\AdminController::class, 'wifiIndex'])->name('wifi.index');
     Route::post('/wifi', [\App\Http\Controllers\AdminController::class, 'wifiStore'])->name('wifi.store');
+    Route::post('/wifi/bill', [\App\Http\Controllers\AdminController::class, 'storeWifiBill'])->name('wifi.bill');
     Route::put('/wifi/{wifi}', [\App\Http\Controllers\AdminController::class, 'wifiUpdate'])->name('wifi.update');
     Route::delete('/wifi/{wifi}', [\App\Http\Controllers\AdminController::class, 'wifiDestroy'])->name('wifi.destroy');
 
@@ -78,6 +80,8 @@ Route::middleware(['auth', 'role:owner'])->prefix('owner')->name('owner.')->grou
     Route::get('/users', [\App\Http\Controllers\OwnerController::class, 'users'])->name('users.index');
     Route::get('/users/create', [\App\Http\Controllers\OwnerController::class, 'createUser'])->name('users.create');
     Route::post('/users', [\App\Http\Controllers\OwnerController::class, 'storeUser'])->name('users.store');
+    Route::get('/users/verify', [\App\Http\Controllers\OwnerController::class, 'verifyUserForm'])->name('users.verify_form');
+    Route::post('/users/verify', [\App\Http\Controllers\OwnerController::class, 'verifyUserSubmit'])->name('users.verify_submit');
     Route::get('/users/{user}/edit', [\App\Http\Controllers\OwnerController::class, 'editUser'])->name('users.edit');
     Route::put('/users/{user}', [\App\Http\Controllers\OwnerController::class, 'updateUser'])->name('users.update');
     Route::delete('/users/{user}', [\App\Http\Controllers\OwnerController::class, 'destroyUser'])->name('users.destroy');

@@ -107,7 +107,58 @@ class OwnerController extends Controller
             'phone' => $validated['phone'],
         ]);
 
-        return redirect()->route('owner.users.index')->with('success', 'Pengguna berhasil ditambahkan.');
+        // Generate OTP
+        $otp = sprintf("%06d", mt_rand(1, 999999));
+        $user->otp_code = $otp;
+        $user->otp_expires_at = now()->addMinutes(15);
+        $user->save();
+
+        // Send OTP
+        try {
+            \Illuminate\Support\Facades\Mail::raw("Kode OTP untuk memverifikasi akun Anda adalah: {$otp}", function($msg) use ($user) {
+                $msg->to($user->email)->subject('Kode OTP Verifikasi Akun Baru Jessa Kost');
+            });
+        } catch (\Exception $e) {
+            // Log or ignore if mail fails locally
+        }
+
+        // Simpan id user ke session
+        $request->session()->put('verify_new_user_id', $user->id);
+
+        return redirect()->route('owner.users.verify_form')->with('success', 'OTP telah dikirim ke email. Masukkan OTP untuk memverifikasi.');
+    }
+
+    public function verifyUserForm(\Illuminate\Http\Request $request)
+    {
+        if (!$request->session()->has('verify_new_user_id')) {
+            return redirect()->route('owner.users.index');
+        }
+        $userId = $request->session()->get('verify_new_user_id');
+        $userToVerify = \App\Models\User::find($userId);
+        
+        return view('owner.users.verify', compact('userToVerify'));
+    }
+
+    public function verifyUserSubmit(\Illuminate\Http\Request $request)
+    {
+        $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'otp_code' => 'required|string|size:6',
+        ]);
+
+        $user = \App\Models\User::find($request->user_id);
+
+        if ($user->otp_code === $request->otp_code && $user->otp_expires_at > now()) {
+            $user->otp_code = null;
+            $user->otp_expires_at = null;
+            $user->email_verified_at = now();
+            $user->save();
+
+            $request->session()->forget('verify_new_user_id');
+            return redirect()->route('owner.users.index')->with('success', 'Pengguna berhasil dibuat dan diverifikasi!');
+        }
+
+        return back()->with('error', 'Kode OTP salah atau kedaluwarsa.')->with('verify_new_user_id', $user->id);
     }
 
     public function editUser(\App\Models\User $user)
@@ -183,9 +234,35 @@ class OwnerController extends Controller
         return redirect()->route('owner.expenses.index')->with('success', 'Pengeluaran berhasil dicatat.');
     }
 
-    public function payments()
+    public function payments(\Illuminate\Http\Request $request)
     {
-        $leases = \App\Models\Lease::with('user', 'room', 'bills')->get();
+        $query = \App\Models\Lease::with(['user', 'room', 'bills']);
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->whereHas('user', function($q) use ($search) {
+                $q->where('name', 'like', '%' . $search . '%');
+            })->orWhereHas('room', function($q) use ($search) {
+                $q->where('room_number', 'like', '%' . $search . '%');
+            });
+        }
+
+        if ($request->filled('status')) {
+            if ($request->status === 'active') {
+                $query->where('is_active', true);
+            } elseif ($request->status === 'inactive') {
+                $query->where('is_active', false);
+            }
+        }
+
+        if ($request->filled('payment_status')) {
+            $paymentStatus = $request->payment_status;
+            $query->whereHas('bills', function($q) use ($paymentStatus) {
+                $q->where('type', 'rent')->where('status', $paymentStatus);
+            });
+        }
+
+        $leases = $query->get();
         return view('owner.payments.index', compact('leases'));
     }
 }

@@ -260,7 +260,36 @@ class AdminController extends Controller
         $guests = $query->get();
         $rooms = Room::orderBy('room_number')->get();
 
-        return view('admin.guests.index', compact('guests', 'rooms'));
+        // Ambil data tenant aktif untuk form Buat Tamu
+        $tenants = User::where('role', 'tenant')->whereHas('leases', function($q) {
+            $q->where('is_active', true);
+        })->get();
+
+        return view('admin.guests.index', compact('guests', 'rooms', 'tenants'));
+    }
+
+    public function storeGuest(\Illuminate\Http\Request $request)
+    {
+        $validated = $request->validate([
+            'tenant_id' => 'required|exists:users,id',
+            'visitor_name' => 'required|string|max:255',
+            'visit_date' => 'required|date',
+            'purpose' => 'required|string|max:255',
+            'is_overnight' => 'boolean',
+            'id_card_photo' => 'nullable|image|max:2048',
+        ]);
+
+        $validated['related_tenant_id'] = $validated['tenant_id'];
+        $validated['is_overnight'] = $request->boolean('is_overnight');
+        unset($validated['tenant_id']);
+
+        if ($request->hasFile('id_card_photo')) {
+            $validated['id_card_photo_path'] = $request->file('id_card_photo')->store('guests', 'public');
+        }
+
+        \App\Models\GuestLog::create($validated);
+
+        return back()->with('success', 'Tamu berhasil dicatat!');
     }
 
     public function tickets(\Illuminate\Http\Request $request)
@@ -282,7 +311,7 @@ class AdminController extends Controller
 
     public function announcements()
     {
-        $announcements = \App\Models\Announcement::latest()->get();
+        $announcements = \App\Models\Announcement::orderByRaw("FIELD(priority, 'urgent', 'important', 'normal')")->latest()->get();
         return view('admin.announcements.index', compact('announcements'));
     }
 
@@ -348,7 +377,10 @@ class AdminController extends Controller
     public function wifiIndex()
     {
         $wifiNetworks = \App\Models\WifiNetwork::latest()->get();
-        return view('admin.wifi.index', compact('wifiNetworks'));
+        $tenants = \App\Models\User::where('role', 'tenant')->whereHas('leases', function($q) {
+            $q->where('is_active', true);
+        })->get();
+        return view('admin.wifi.index', compact('wifiNetworks', 'tenants'));
     }
 
     public function wifiStore(\Illuminate\Http\Request $request)
@@ -381,6 +413,35 @@ class AdminController extends Controller
     {
         $wifi->delete();
         return redirect()->route('admin.wifi.index')->with('success', 'WiFi network deleted successfully.');
+    }
+
+    public function storeWifiBill(\Illuminate\Http\Request $request)
+    {
+        $validated = $request->validate([
+            'tenant_id' => 'required|exists:users,id',
+            'billing_period' => 'required|string|max:20',
+            'amount' => 'required|numeric|min:0',
+        ]);
+
+        $tenant = \App\Models\User::with(['leases' => function($q) {
+            $q->where('is_active', true);
+        }])->findOrFail($validated['tenant_id']);
+
+        $activeLease = $tenant->leases->first();
+        if (!$activeLease) {
+            return back()->with('error', 'Penghuni ini tidak memiliki kamar aktif.');
+        }
+
+        \App\Models\Bill::create([
+            'lease_id' => $activeLease->id,
+            'type' => 'internet',
+            'amount' => $validated['amount'],
+            'billing_period' => $validated['billing_period'],
+            'due_date' => now()->addDays(7),
+            'status' => 'unpaid',
+        ]);
+
+        return back()->with('success', 'Tagihan WiFi berhasil dikirim ke penghuni!');
     }
 
     public function expenses()

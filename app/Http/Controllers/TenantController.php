@@ -127,7 +127,10 @@ class TenantController extends Controller
 
     public function announcements()
     {
-        $announcements = \App\Models\Announcement::where('is_active', true)->latest()->get();
+        $announcements = \App\Models\Announcement::where('is_active', true)
+            ->orderByRaw("FIELD(priority, 'urgent', 'important', 'normal')")
+            ->latest()
+            ->get();
         return view('tenant.announcements.index', compact('announcements'));
     }
 
