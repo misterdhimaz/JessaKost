@@ -76,7 +76,7 @@
                         <!-- Main Image: Foto Kost Anda -->
                         <div class="w-full max-w-[420px] h-[480px] md:h-[580px] rounded-[2.5rem] shadow-[0_15px_40px_rgba(146,0,58,0.1)] md:shadow-[0_30px_60px_rgba(146,0,58,0.15)] overflow-hidden border-[6px] md:border-[8px] border-white relative group transform hover:-translate-y-1 transition-transform duration-500">
                             <div class="absolute inset-0 bg-jessa-maroon/10 group-hover:bg-transparent transition-colors duration-500 z-10"></div>
-                            <img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Bangunan Jessa Kost" class="w-full h-full object-cover transform md:group-hover:scale-105 transition-transform duration-700 z-0">
+                            <img src="{{ asset('images/home-bangunan.jpg') }}" alt="Bangunan Jessa Kost" class="w-full h-full object-cover transform md:group-hover:scale-105 transition-transform duration-700 z-0">
 
                             <!-- Overlay Hiasan -->
                             <div class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-gray-900/90 via-gray-900/40 to-transparent p-6 pt-24 z-20">
@@ -88,7 +88,7 @@
 
                         <!-- Floating Image 2: Interior -->
                         <div class="absolute -left-2 md:-left-12 bottom-12 w-[180px] md:w-[260px] h-[180px] md:h-[260px] rounded-[1.5rem] md:rounded-[2rem] shadow-[0_10px_30px_rgba(0,0,0,0.1)] overflow-hidden border-[4px] md:border-[6px] border-white z-20 animate-float bg-white" style="animation-delay: 1s;">
-                            <img src="https://images.unsplash.com/photo-1555854877-bab0e564b8d5?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" alt="Interior Kamar" class="w-full h-full object-cover">
+                            <img src="{{ asset('images/home-kamar.jpg') }}" alt="Interior Kamar" class="w-full h-full object-cover">
                         </div>
 
                         <!-- Floating Card: Aman -->
