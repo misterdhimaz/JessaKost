@@ -100,6 +100,6 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-Route::post('webhook/mayar', [\App\Http\Controllers\WebhookController::class, 'handleMayar']);
+Route::match(['get', 'post'], 'webhook/mayar', [\App\Http\Controllers\WebhookController::class, 'handleMayar']);
 
 require __DIR__.'/auth.php';
