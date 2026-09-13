@@ -111,7 +111,7 @@ class TenantController extends Controller
                 ]
             ],
             'extraData' => [
-                'billId' => $bill->id
+                'billId' => (string) $bill->id
             ]
         ];
 
