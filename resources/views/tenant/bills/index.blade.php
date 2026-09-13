@@ -76,7 +76,7 @@
                                     @endif
                                 </div>
                             @else
-                                <a href="{{ $bill->payment_url ?? '#' }}" class="bg-jessa-maroon text-white font-bold px-5 py-2 rounded-xl hover:bg-jessa-maroonDark transition-colors text-sm shadow-sm whitespace-nowrap">
+                                <a href="{{ route('tenant.bills.pay', $bill->id) }}" class="bg-jessa-maroon text-white font-bold px-5 py-2 rounded-xl hover:bg-jessa-maroonDark transition-colors text-sm shadow-sm whitespace-nowrap">
                                     <i class="fas fa-credit-card mr-2"></i>Bayar
                                 </a>
                             @endif
