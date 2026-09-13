@@ -1,6 +1,14 @@
 @extends('layouts.public', ['title' => 'Profil Kami'])
 
 @section('content')
+    <!-- Page Hero -->
+    <section class="relative pt-32 pb-20 lg:pt-40 lg:pb-28 bg-jessa-cream overflow-hidden rounded-b-[2rem] sm:rounded-b-[3rem] border-b border-jessa-maroon/10 mb-10">
+        <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1513694203232-719a280e022f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80')] bg-cover bg-center opacity-10 pointer-events-none"></div>
+        <div class="absolute inset-0 bg-gradient-to-t from-jessa-cream via-jessa-cream/80 to-transparent pointer-events-none"></div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+            <span class="inline-block py-1 px-3 rounded-full bg-jessa-maroon/10 text-jessa-maroon font-bold text-xs uppercase tracking-widest mb-4 border border-jessa-maroon/20" data-aos="fade-up">Tentang Kami</span>
+            <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold text-gray-900 mb-6 tracking-tight" data-aos="fade-up" data-aos-delay="100">Profil <span class="text-jessa-maroon">Jessa Kost</span></h1>
+            <p class="text-gray-700 text-lg md:text-xl font-medium max-w-2xl mx-auto leading-relaxed" data-aos="fade-up" data-aos-delay="200">Menyediakan hunian sementara yang mendukung gaya hidup produktif mahasiswa dengan perpaduan kenyamanan modern dan lokasi strategis.</p>
     <!-- Hero Section -->
     <section class="relative pt-32 pb-20 md:pt-40 md:pb-28 overflow-hidden bg-white">
         <!-- Pattern Background -->
@@ -9,7 +17,7 @@
 
         <div class="container mx-auto px-4 md:px-8 relative z-10">
             <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center gap-12 lg:gap-20">
-                
+
                 <!-- Text Content -->
                 <div class="flex-1 text-center md:text-left space-y-6">
                     <span class="inline-block px-4 py-1.5 bg-jessa-maroon/10 text-jessa-maroon font-black uppercase tracking-widest rounded-full text-xs md:text-sm">
@@ -38,7 +46,8 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-center mb-20">
                 <div class="order-2 md:order-1 relative" data-aos="fade-right">
                     <div class="absolute inset-0 bg-jessa-maroon/10 transform -rotate-3 rounded-2xl"></div>
-                    <img src="{{ asset('images/profil-gedung.jpg') }}" alt="Jessa Kost Building" class="relative rounded-2xl shadow-xl object-cover h-[400px] w-full">
+
+                    <img src="{{ asset('images/.jpg') }}" alt="Jessa Kost Building" class="relative rounded-2xl shadow-xl object-cover h-[400px] w-full">
                 </div>
 
                 <div class="order-1 md:order-2" data-aos="fade-left">
@@ -69,6 +78,7 @@
                     <div class="md:col-span-1 flex justify-center">
                         <div class="relative w-48 h-48 rounded-full overflow-hidden border-4 border-white shadow-xl">
                             <!-- Placeholder image for Bapak Kost -->
+                            <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" alt="Bapak Kost" class="w-full h-full object-cover">
                             <img src="{{ asset('images/profil-owner.jpg') }}" alt="Bapak Kost" class="w-full h-full object-cover">
                         </div>
                     </div>

@@ -14,14 +14,19 @@ class TenantController extends Controller
         $user = $request->user();
         $lease = Lease::where('user_id', $user->id)->where('is_active', true)->first();
 
-        $bills = collect();
+        $recentBills = collect();
+        $paidBillsCount = 0;
+        $unpaidBillsCount = 0;
+        
         if ($lease) {
-            $bills = Bill::where('lease_id', $lease->id)->where('status', 'unpaid')->get();
+            $recentBills = Bill::where('lease_id', $lease->id)->latest()->take(3)->get();
+            $paidBillsCount = Bill::where('lease_id', $lease->id)->where('status', 'paid')->count();
+            $unpaidBillsCount = Bill::where('lease_id', $lease->id)->where('status', 'unpaid')->count();
         }
 
         $wifiNetworks = \App\Models\WifiNetwork::all();
 
-        return view('tenant.dashboard', compact('user', 'lease', 'bills', 'wifiNetworks'));
+        return view('tenant.dashboard', compact('user', 'lease', 'recentBills', 'paidBillsCount', 'unpaidBillsCount', 'wifiNetworks'));
     }
 
     public function tickets(Request $request)
@@ -66,12 +71,38 @@ class TenantController extends Controller
         $user = $request->user();
         $lease = Lease::where('user_id', $user->id)->where('is_active', true)->first();
 
-        $bills = collect();
+        $query = Bill::query();
         if ($lease) {
-            $bills = Bill::where('lease_id', $lease->id)->latest()->get();
+            $query->where('lease_id', $lease->id);
+        } else {
+            $query->where('id', 0); // No bills if no lease
         }
 
-        return view('tenant.bills.index', compact('bills', 'lease'));
+        if ($request->filled('type') && $request->type !== 'all') {
+            $query->where('type', $request->type);
+        }
+
+        if ($request->filled('status') && $request->status !== 'all') {
+            $query->where('status', $request->status);
+        }
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('billing_period', 'like', "%{$search}%")
+                  ->orWhere('amount', 'like', "%{$search}%");
+            });
+        }
+
+        // Get counts for summary
+        $summaryQuery = Bill::where('lease_id', $lease ? $lease->id : 0);
+        $totalUnpaid = (clone $summaryQuery)->where('status', 'unpaid')->sum('amount');
+        $countUnpaid = (clone $summaryQuery)->where('status', 'unpaid')->count();
+        $countPaid   = (clone $summaryQuery)->where('status', 'paid')->count();
+
+        $bills = $query->latest()->paginate(10)->withQueryString();
+
+        return view('tenant.bills.index', compact('bills', 'lease', 'totalUnpaid', 'countUnpaid', 'countPaid'));
     }
 
     public function payBill(Request $request, Bill $bill)
@@ -127,7 +158,7 @@ class TenantController extends Controller
         // Tampilkan pesan error spesifik dari Mayar ke layar
         $mayarResponse = $response->json();
         $errorMsg = 'Gagal membuat tautan.';
-        
+
         if (isset($mayarResponse['messages'])) {
             $errorMsg = is_array($mayarResponse['messages']) ? implode(', ', $mayarResponse['messages']) : $mayarResponse['messages'];
         }
