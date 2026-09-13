@@ -42,15 +42,15 @@
                     <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari periode (misal: Sep 2026)..." class="w-full bg-gray-50 border border-gray-200 text-gray-700 text-sm rounded-xl focus:ring-jessa-maroon focus:border-jessa-maroon pl-10 pr-4 py-3 font-medium transition-colors">
                     <i class="fas fa-search absolute left-3.5 top-3.5 text-gray-400"></i>
                 </div>
-                
-                <select name="type" class="w-full md:w-auto bg-gray-50 border border-gray-200 text-gray-700 text-sm rounded-xl focus:ring-jessa-maroon focus:border-jessa-maroon py-3 px-4 font-bold transition-colors" onchange="this.form.submit()">
+
+                <select name="type" class="w-full md:w-auto bg-gray-50 border border-gray-200 text-gray-700 text-sm rounded-xl focus:ring-jessa-maroon focus:border-jessa-maroon py-3 pl-4 pr-10 cursor-pointer font-bold transition-colors appearance-none" style="background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23131313%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E'); background-repeat: no-repeat; background-position: right 1rem center; background-size: 0.65rem auto;" onchange="this.form.submit()">
                     <option value="all">Semua Kategori</option>
                     <option value="rent" {{ request('type') == 'rent' ? 'selected' : '' }}>Sewa Kamar</option>
                     <option value="electricity" {{ request('type') == 'electricity' ? 'selected' : '' }}>Listrik</option>
                     <option value="internet" {{ request('type') == 'internet' ? 'selected' : '' }}>WiFi</option>
                 </select>
 
-                <select name="status" class="w-full md:w-auto bg-gray-50 border border-gray-200 text-gray-700 text-sm rounded-xl focus:ring-jessa-maroon focus:border-jessa-maroon py-3 px-4 font-bold transition-colors" onchange="this.form.submit()">
+                <select name="status" class="w-full md:w-auto bg-gray-50 border border-gray-200 text-gray-700 text-sm rounded-xl focus:ring-jessa-maroon focus:border-jessa-maroon py-3 pl-4 pr-10 cursor-pointer font-bold transition-colors appearance-none" style="background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23131313%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E'); background-repeat: no-repeat; background-position: right 1rem center; background-size: 0.65rem auto;" onchange="this.form.submit()">
                     <option value="all">Semua Status</option>
                     <option value="unpaid" {{ request('status') == 'unpaid' ? 'selected' : '' }}>Belum Lunas</option>
                     <option value="paid" {{ request('status') == 'paid' ? 'selected' : '' }}>Lunas</option>
@@ -102,7 +102,7 @@
                             <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-0.5">Total</p>
                             <p class="font-black text-xl text-gray-900">Rp {{ number_format($bill->amount, 0, ',', '.') }}</p>
                         </div>
-                        
+
                         @if($bill->status == 'paid')
                             <div class="flex flex-col items-end gap-2 border-l border-gray-100 pl-4">
                                 <span class="inline-flex items-center gap-1.5 bg-green-50 text-green-700 border border-green-200 px-4 py-1.5 rounded-full text-xs font-bold shadow-sm">
@@ -133,7 +133,7 @@
                 </div>
                 @endforelse
             </div>
-            
+
             @if($bills->hasPages())
                 <div class="p-5 border-t border-gray-50 bg-gray-50/30">
                     {{ $bills->links() }}
@@ -147,7 +147,7 @@
                 <i class="fas fa-times text-xl"></i>
             </button>
             <div class="relative w-full max-w-5xl flex flex-col items-center justify-center h-full" @click.away="photoModalOpen = false" x-transition:enter="transition ease-out duration-300 delay-100" x-transition:enter-start="opacity-0 scale-95 translate-y-8" x-transition:enter-end="opacity-100 scale-100 translate-y-0">
-                
+
                 <template x-if="currentCode && currentCode !== ''">
                     <div class="bg-white p-6 rounded-3xl mb-8 shadow-2xl flex flex-col items-center max-w-md w-full border border-gray-100 relative overflow-hidden group">
                         <div class="absolute top-0 inset-x-0 h-2 bg-gradient-to-r from-jessa-maroon to-orange-500"></div>
