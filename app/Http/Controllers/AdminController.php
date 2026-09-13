@@ -173,16 +173,25 @@ class AdminController extends Controller
     public function uploadTokenProof(\Illuminate\Http\Request $request, \App\Models\Bill $bill)
     {
         $request->validate([
-            'token_code' => 'required|string',
-            'token_proof' => 'required|image|max:5120',
+            'token_code' => 'required_without:token_proof|nullable|string',
+            'token_proof' => 'required_without:token_code|nullable|image|max:5120',
+        ], [
+            'token_code.required_without' => 'Mohon isi Kode Token atau unggah Struk Token (salah satu wajib ada).',
+            'token_proof.required_without' => 'Mohon isi Kode Token atau unggah Struk Token (salah satu wajib ada).'
         ]);
 
-        $path = $request->file('token_proof')->store('tokens', 'public');
+        $data = [];
+        if ($request->filled('token_code')) {
+            $data['token_code'] = $request->token_code;
+        }
+        
+        if ($request->hasFile('token_proof') && $request->file('token_proof')->isValid()) {
+            $data['token_proof_path'] = $request->file('token_proof')->store('tokens', 'public');
+        }
 
-        $bill->update([
-            'token_code' => $request->token_code,
-            'token_proof_path' => $path,
-        ]);
+        if (!empty($data)) {
+            $bill->update($data);
+        }
 
         return back()->with('success', 'Bukti pengisian token berhasil diunggah.');
     }
@@ -394,7 +403,7 @@ class AdminController extends Controller
             'body' => 'required|string',
             'priority' => 'required|in:normal,important,urgent',
         ]);
-        
+
         $validated['is_active'] = $request->boolean('is_active');
 
         $announcement->update($validated);
