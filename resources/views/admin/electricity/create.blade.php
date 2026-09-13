@@ -68,7 +68,10 @@
                             </div>
                         </div>
 
-                        <div class="pt-4 flex justify-end">
+                        <div class="pt-4 flex justify-end gap-3 border-t border-gray-100 mt-6 pt-6">
+                            <a href="{{ route('admin.electricity.index') }}" class="bg-gray-100 hover:bg-gray-200 text-gray-600 font-bold py-3 px-6 rounded-xl transition-all flex items-center gap-2">
+                                Batal
+                            </a>
                             <button type="submit" class="bg-jessa-maroon hover:bg-jessa-maroonDark text-white font-bold py-3 px-8 rounded-xl shadow-lg transform hover:-translate-y-1 transition-all flex items-center gap-2">
                                 <i class="fas fa-save"></i> Simpan Catatan Listrik
                             </button>

@@ -154,12 +154,12 @@ class AdminController extends Controller
             $reading = \App\Models\ElectricityReading::where('room_id', $bill->lease->room_id)
                 ->where('reading_month', \Carbon\Carbon::parse($bill->billing_period)->startOfMonth()->format('Y-m-d'))
                 ->first();
-            
+
             if ($reading) {
                 $reading->delete();
             }
         }
-        
+
         $type = $bill->type;
         $bill->delete();
 
@@ -375,7 +375,7 @@ class AdminController extends Controller
         ]);
 
         $validated['user_id'] = auth()->id();
-        $validated['is_active'] = true;
+        $validated['is_active'] = $request->has('is_active') ? $request->boolean('is_active') : ($request->isMethod('post') ? false : true);
 
         \App\Models\Announcement::create($validated);
 
@@ -393,8 +393,9 @@ class AdminController extends Controller
             'title' => 'required|string|max:255',
             'body' => 'required|string',
             'priority' => 'required|in:normal,important,urgent',
-            'is_active' => 'boolean',
         ]);
+        
+        $validated['is_active'] = $request->boolean('is_active');
 
         $announcement->update($validated);
 

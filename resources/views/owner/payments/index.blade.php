@@ -88,7 +88,7 @@
                                     @else
                                         @php
                                             $isLate = $latestRentBill->due_date && \Carbon\Carbon::parse($latestRentBill->due_date)->isPast();
-                                            $daysLate = $isLate ? \Carbon\Carbon::parse($latestRentBill->due_date)->diffInDays(now()) : 0;
+                                            $daysLate = $isLate ? (int) \Carbon\Carbon::parse($latestRentBill->due_date)->startOfDay()->diffInDays(now()->startOfDay()) : 0;
                                         @endphp
 
                                         <span class="inline-flex items-center gap-1.5 {{ $isLate ? 'bg-red-50 text-red-700 border-red-100' : 'bg-yellow-50 text-yellow-700 border-yellow-100' }} px-3 py-1.5 rounded-full text-xs font-bold border">

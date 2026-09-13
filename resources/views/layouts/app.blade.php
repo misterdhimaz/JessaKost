@@ -381,7 +381,7 @@
                   x-transition:enter-start="opacity-0 translate-y-8"
                   x-transition:enter-end="opacity-100 translate-y-0"
                   style="display: none;">
-                
+
                 {{-- Global Alerts --}}
                 @if(session('success'))
                 <div class="mb-6 p-4 rounded-2xl bg-green-50 border border-green-200 text-green-700 flex items-center gap-3 shadow-sm" x-data="{ show: true }" x-show="show" x-transition>
@@ -396,6 +396,24 @@
                     <i class="fas fa-exclamation-circle text-xl shrink-0"></i>
                     <span class="font-bold flex-1">{{ session('error') }}</span>
                     <button @click="show = false" class="text-red-500 hover:text-red-800"><i class="fas fa-times"></i></button>
+                </div>
+                @endif
+
+                {{-- Validation Errors --}}
+                @if($errors->any())
+                <div class="mb-6 p-4 rounded-2xl bg-red-50 border border-red-200 text-red-700 shadow-sm" x-data="{ show: true }" x-show="show" x-transition>
+                    <div class="flex items-start gap-3">
+                        <i class="fas fa-exclamation-triangle text-xl mt-0.5 shrink-0"></i>
+                        <div class="flex-1">
+                            <span class="font-bold block mb-1">Ada kesalahan pada input Anda:</span>
+                            <ul class="list-disc list-inside text-sm space-y-1">
+                                @foreach($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                        <button @click="show = false" class="text-red-500 hover:text-red-800"><i class="fas fa-times"></i></button>
+                    </div>
                 </div>
                 @endif
 
