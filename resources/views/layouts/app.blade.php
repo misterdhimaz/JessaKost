@@ -381,6 +381,24 @@
                   x-transition:enter-start="opacity-0 translate-y-8"
                   x-transition:enter-end="opacity-100 translate-y-0"
                   style="display: none;">
+                
+                {{-- Global Alerts --}}
+                @if(session('success'))
+                <div class="mb-6 p-4 rounded-2xl bg-green-50 border border-green-200 text-green-700 flex items-center gap-3 shadow-sm" x-data="{ show: true }" x-show="show" x-transition>
+                    <i class="fas fa-check-circle text-xl shrink-0"></i>
+                    <span class="font-bold flex-1">{{ session('success') }}</span>
+                    <button @click="show = false" class="text-green-500 hover:text-green-800"><i class="fas fa-times"></i></button>
+                </div>
+                @endif
+
+                @if(session('error'))
+                <div class="mb-6 p-4 rounded-2xl bg-red-50 border border-red-200 text-red-700 flex items-center gap-3 shadow-sm" x-data="{ show: true }" x-show="show" x-transition>
+                    <i class="fas fa-exclamation-circle text-xl shrink-0"></i>
+                    <span class="font-bold flex-1">{{ session('error') }}</span>
+                    <button @click="show = false" class="text-red-500 hover:text-red-800"><i class="fas fa-times"></i></button>
+                </div>
+                @endif
+
                 {{ $slot }}
             </main>
 
