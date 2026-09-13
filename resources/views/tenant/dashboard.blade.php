@@ -52,7 +52,7 @@
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {{-- Bagian Kiri: Info Utama --}}
             <div class="lg:col-span-2 space-y-8">
-                
+
                 <h3 class="font-extrabold text-lg text-gray-900 flex items-center"><i class="fas fa-wallet text-jessa-maroon mr-2"></i>Status Keuangan</h3>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div class="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm relative overflow-hidden group hover:shadow-md transition-shadow">
@@ -67,7 +67,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm relative overflow-hidden group hover:shadow-md transition-shadow">
                         <div class="absolute -right-6 -top-6 w-24 h-24 bg-red-50 rounded-full opacity-50 group-hover:scale-150 transition-transform duration-500"></div>
                         <div class="flex items-center gap-4 mb-4 relative z-10">
@@ -88,7 +88,7 @@
                         Lihat Semua <i class="fas fa-arrow-right text-xs group-hover:translate-x-1 transition-transform"></i>
                     </a>
                 </div>
-                
+
                 <div class="bg-white rounded-[2rem] border border-gray-100 shadow-sm overflow-hidden">
                     <div class="divide-y divide-gray-50">
                         @forelse($recentBills as $bill)
@@ -178,29 +178,29 @@
                 <h3 class="font-extrabold text-lg text-gray-900"><i class="fas fa-star text-yellow-400 mr-2"></i>Fasilitas & Kontak</h3>
 
                 @foreach($wifiNetworks as $wifi)
-                <div class="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-[2rem] p-6 shadow-lg shadow-purple-500/20 text-white relative overflow-hidden group">
+                <div class="bg-gray-900 rounded-[2rem] p-6 shadow-lg shadow-gray-900/20 text-white relative overflow-hidden group">
                     <!-- dekorasi -->
-                    <div class="absolute -right-10 -top-10 w-32 h-32 bg-white/10 rounded-full filter blur-2xl group-hover:scale-150 transition-transform duration-700"></div>
-                    
-                    <div class="relative z-10 flex items-center gap-3 mb-4 border-b border-white/20 pb-4">
-                        <div class="w-10 h-10 bg-white/20 backdrop-blur-md rounded-xl flex items-center justify-center text-white shadow-inner">
+                    <div class="absolute -right-10 -top-10 w-32 h-32 bg-white/5 rounded-full filter blur-2xl group-hover:scale-150 transition-transform duration-700"></div>
+
+                    <div class="relative z-10 flex items-center gap-3 mb-4 border-b border-gray-700 pb-4">
+                        <div class="w-10 h-10 bg-gray-800 rounded-xl flex items-center justify-center text-white shadow-inner">
                             <i class="fas fa-wifi text-xl"></i>
                         </div>
                         <div>
-                            <p class="text-xs text-white/70 font-bold uppercase tracking-wider">Jaringan WiFi</p>
-                            <p class="font-black text-lg">{{ $wifi->name }}</p>
+                            <p class="text-xs text-gray-400 font-bold uppercase tracking-wider">Jaringan WiFi</p>
+                            <p class="font-black text-lg text-white">{{ $wifi->name }}</p>
                         </div>
                     </div>
 
                     <div class="relative z-10 space-y-3">
-                        <div class="bg-black/20 rounded-xl p-3 backdrop-blur-sm border border-white/10">
-                            <p class="text-[10px] text-white/50 uppercase font-bold tracking-widest mb-1">SSID Name</p>
-                            <p class="font-extrabold font-mono text-sm break-words">{{ $wifi->ssid }}</p>
+                        <div class="bg-gray-800 rounded-xl p-3 border border-gray-700">
+                            <p class="text-[10px] text-gray-400 uppercase font-bold tracking-widest mb-1">SSID Name</p>
+                            <p class="font-extrabold font-mono text-sm break-words text-white">{{ $wifi->ssid }}</p>
                         </div>
-                        <div class="bg-black/20 rounded-xl p-3 backdrop-blur-sm border border-white/10">
-                            <p class="text-[10px] text-white/50 uppercase font-bold tracking-widest mb-1">Password</p>
+                        <div class="bg-gray-800 rounded-xl p-3 border border-gray-700">
+                            <p class="text-[10px] text-gray-400 uppercase font-bold tracking-widest mb-1">Password</p>
                             <div class="flex items-center justify-between">
-                                <p class="font-extrabold font-mono text-sm break-words">{{ $wifi->password }}</p>
+                                <p class="font-extrabold font-mono text-sm break-words text-white">{{ $wifi->password }}</p>
                             </div>
                         </div>
                     </div>
