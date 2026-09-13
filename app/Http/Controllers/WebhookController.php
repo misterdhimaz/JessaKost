@@ -12,10 +12,14 @@ class WebhookController extends Controller
     {
         Log::info("Mayar Webhook received: ", $request->all());
 
-        $event = $request->input('event');
-        $data = $request->input('data');
+        $event = $request->input('event', '');
+        $data = $request->input('data', []);
+        $status = strtolower($data['status'] ?? '');
 
-        if ($event === 'payment.received' && isset($data['status']) && strtolower($data['status']) === 'paid') {
+        // Terima berbagai macam format event sukses dari Mayar
+        $isSuccessEvent = in_array($event, ['payment.success', 'payment.received', 'invoice.paid']) || in_array($status, ['paid', 'success', 'settled']);
+
+        if ($isSuccessEvent) {
             // Check if extraData exists in data or nested inside invoice
             $extraData = $data['extraData'] ?? $data['invoice']['extraData'] ?? null;
             $billId = $extraData['billId'] ?? null;

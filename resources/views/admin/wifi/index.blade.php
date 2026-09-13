@@ -90,12 +90,12 @@
                         <option value="paid" {{ request('status') == 'paid' ? 'selected' : '' }}>Lunas</option>
                         <option value="unpaid" {{ request('status') == 'unpaid' ? 'selected' : '' }}>Belum Lunas</option>
                     </select>
-                    
+
                     <div class="relative w-full sm:w-64">
                         <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari penghuni..." class="w-full bg-white border border-gray-200 text-gray-700 text-sm rounded-xl focus:ring-jessa-maroon focus:border-jessa-maroon pl-10 pr-4 py-2.5 font-medium">
                         <i class="fas fa-search absolute left-3.5 top-3 text-gray-400"></i>
                     </div>
-                    
+
                     <button type="submit" class="hidden"></button>
                 </form>
             </div>
@@ -109,6 +109,9 @@
                             <div class="bg-green-500 text-white text-[10px] font-black uppercase tracking-wider py-1 w-24 text-center absolute top-3 -right-6 rotate-45 shadow-sm">
                                 LUNAS
                             </div>
+                        </div>
+                        <div class="absolute bottom-2 right-4 text-[10px] font-bold text-green-600">
+                            {{ $bill->paid_at ? \Carbon\Carbon::parse($bill->paid_at)->format('d/m/Y') : '-' }}
                         </div>
                         @endif
 

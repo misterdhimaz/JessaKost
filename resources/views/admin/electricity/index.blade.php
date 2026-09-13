@@ -43,9 +43,12 @@
                             </div>
                             <div>
                                 @if($bill->status == 'paid')
-                                <span class="px-2.5 py-1 rounded-lg text-xs font-bold bg-green-50 text-green-600 border border-green-100 flex items-center gap-1">
-                                    <i class="fas fa-check-circle"></i> Lunas
-                                </span>
+                                <div class="flex flex-col items-end gap-1">
+                                    <span class="px-2.5 py-1 rounded-lg text-xs font-bold bg-green-50 text-green-600 border border-green-100 flex items-center gap-1">
+                                        <i class="fas fa-check-circle"></i> Lunas
+                                    </span>
+                                    <span class="text-[10px] font-bold text-gray-500">{{ $bill->paid_at ? \Carbon\Carbon::parse($bill->paid_at)->format('d/m/Y') : '-' }}</span>
+                                </div>
                                 @else
                                 <span class="px-2.5 py-1 rounded-lg text-xs font-bold bg-red-50 text-red-600 border border-red-100 flex items-center gap-1">
                                     <i class="fas fa-clock"></i> Belum Bayar

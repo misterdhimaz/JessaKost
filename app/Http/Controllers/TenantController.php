@@ -211,18 +211,24 @@ class TenantController extends Controller
 
     public function storeGuest(Request $request)
     {
-        $validated = $request->validate([
+        $rules = [
             'visitor_name' => 'required|string|max:255',
             'visit_date' => 'required|date',
             'purpose' => 'required|string|max:255',
-            'is_overnight' => 'boolean',
-            'id_card_photo' => 'nullable|image|max:2048',
-        ]);
+            'is_overnight' => 'nullable|boolean',
+        ];
+
+        // Hanya validasi gambar jika file benar-benar diunggah (mencegah error empty upload)
+        if ($request->hasFile('id_card_photo') && $request->file('id_card_photo')->isValid()) {
+            $rules['id_card_photo'] = 'image|max:10240';
+        }
+
+        $validated = $request->validate($rules);
 
         $validated['related_tenant_id'] = $request->user()->id;
         $validated['is_overnight'] = $request->boolean('is_overnight');
 
-        if ($request->hasFile('id_card_photo')) {
+        if ($request->hasFile('id_card_photo') && $request->file('id_card_photo')->isValid()) {
             $validated['id_card_photo_path'] = $request->file('id_card_photo')->store('guests', 'public');
         } elseif ($request->filled('id_card_base64')) {
             $image_parts = explode(";base64,", $request->id_card_base64);
