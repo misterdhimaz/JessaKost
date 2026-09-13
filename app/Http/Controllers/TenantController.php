@@ -106,7 +106,7 @@ class TenantController extends Controller
             'items' => [
                 [
                     'quantity' => 1,
-                    'rate' => $bill->amount,
+                    'rate' => (int) $bill->amount,
                     'description' => "Tagihan {$typeLabel} " . \Carbon\Carbon::parse($bill->billing_period)->translatedFormat('F Y')
                 ]
             ],
