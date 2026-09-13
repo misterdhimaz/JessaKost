@@ -98,16 +98,19 @@ class TenantController extends Controller
         $typeLabel = $bill->type === 'rent' ? 'Sewa Kamar' : ($bill->type === 'electricity' ? 'Listrik' : 'Tagihan Lainnya');
 
         $payload = [
-            'name' => $user->name,
-            'email' => $user->email,
-            'mobile' => $mobile,
-            'description' => "Pembayaran Tagihan {$typeLabel} - Jessa Kost",
-            'redirectUrl' => route('tenant.bills.index'),
+            'name' => (string) $user->name,
+            'email' => (string) $user->email,
+            'mobile' => (string) $mobile,
+            'amount' => (int) $bill->amount,
+            'description' => (string) "Pembayaran Tagihan {$typeLabel} - Jessa Kost",
+            'redirectUrl' => (string) route('tenant.bills.index'),
             'items' => [
                 [
+                    'name' => (string) "Tagihan {$typeLabel}",
                     'quantity' => 1,
+                    'price' => (int) $bill->amount,
                     'rate' => (int) $bill->amount,
-                    'description' => "Tagihan {$typeLabel} " . \Carbon\Carbon::parse($bill->billing_period)->translatedFormat('F Y')
+                    'description' => (string) "Bulan " . \Carbon\Carbon::parse($bill->billing_period)->translatedFormat('F Y')
                 ]
             ],
             'extraData' => [
@@ -115,14 +118,35 @@ class TenantController extends Controller
             ]
         ];
 
-        $response = \Illuminate\Support\Facades\Http::withToken($apiKey)->post("{$baseUrl}/invoice/create", $payload);
+        $response = \Illuminate\Support\Facades\Http::withToken($apiKey)->acceptJson()->post("{$baseUrl}/invoice/create", $payload);
 
         if ($response->successful() && isset($response->json()['data']['link'])) {
             return redirect()->away($response->json()['data']['link']);
         }
 
+        // Tampilkan pesan error spesifik dari Mayar ke layar
+        $mayarResponse = $response->json();
+        $errorMsg = 'Gagal membuat tautan.';
+        
+        if (isset($mayarResponse['messages'])) {
+            $errorMsg = is_array($mayarResponse['messages']) ? implode(', ', $mayarResponse['messages']) : $mayarResponse['messages'];
+        }
+        if (isset($mayarResponse['data']) && is_array($mayarResponse['data'])) {
+            $details = [];
+            foreach ($mayarResponse['data'] as $err) {
+                if (is_array($err) && isset($err['message'])) {
+                    $details[] = $err['message'];
+                } elseif (is_string($err)) {
+                    $details[] = $err;
+                }
+            }
+            if (count($details) > 0) {
+                $errorMsg .= ' Detail: ' . implode(' | ', $details);
+            }
+        }
+
         \Illuminate\Support\Facades\Log::error('Mayar API Error: ' . $response->body());
-        return redirect()->route('tenant.bills.index')->with('error', 'Gagal membuat tautan pembayaran. Pastikan API Key Mayar Anda valid.');
+        return redirect()->route('tenant.bills.index')->with('error', 'Mayar Error: ' . $errorMsg);
     }
 
     public function announcements()
