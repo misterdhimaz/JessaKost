@@ -87,10 +87,14 @@
                                         <p class="text-xs text-gray-600 font-medium">Dibayar: {{ \Carbon\Carbon::parse($latestRentBill->paid_at)->format('d M Y') }}</p>
                                     @else
                                         @php
-                                            $today = \Carbon\Carbon::now('Asia/Jakarta')->startOfDay();
-                                            $dueDate = \Carbon\Carbon::parse($latestRentBill->due_date)->startOfDay();
-                                            $isLate = $latestRentBill->due_date && $today->gt($dueDate);
-                                            $daysLate = $isLate ? (int) $dueDate->diffInDays($today) : 0;
+                                            $todayStr = \Carbon\Carbon::now('Asia/Jakarta')->format('Y-m-d');
+                                            $todayNeutral = \Carbon\Carbon::parse($todayStr)->startOfDay();
+                                            
+                                            $dueStr = \Carbon\Carbon::parse($latestRentBill->due_date)->format('Y-m-d');
+                                            $dueDateNeutral = \Carbon\Carbon::parse($dueStr)->startOfDay();
+
+                                            $isLate = $latestRentBill->due_date && $todayNeutral->gt($dueDateNeutral);
+                                            $daysLate = $isLate ? (int) $dueDateNeutral->diffInDays($todayNeutral) : 0;
                                         @endphp
 
                                         <span class="inline-flex items-center gap-1.5 {{ $isLate ? 'bg-red-50 text-red-700 border-red-100' : 'bg-yellow-50 text-yellow-700 border-yellow-100' }} px-3 py-1.5 rounded-full text-xs font-bold border">
