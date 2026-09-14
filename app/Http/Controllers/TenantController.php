@@ -17,7 +17,7 @@ class TenantController extends Controller
         $recentBills = collect();
         $paidBillsCount = 0;
         $unpaidBillsCount = 0;
-        
+
         if ($lease) {
             $recentBills = Bill::where('lease_id', $lease->id)->latest()->take(3)->get();
             $paidBillsCount = Bill::where('lease_id', $lease->id)->where('status', 'paid')->count();
